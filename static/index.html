@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GRADY</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --parchment: #f6e7c8;
+        --parchment-dark: #e4c890;
+        --ink: #2e1b0f;
+        --ink-soft: #5b4231;
+        --gold: #c9a44c;
+        --gold-deep: #9a7636;
+        --seal: #8b2f2f;
+        --seal-dark: #5a1a1a;
+        --shadow: 0 18px 40px rgba(28, 19, 12, 0.25);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Goudy Old Style", "Garamond", "Palatino Linotype", "Book Antiqua", "Georgia", serif;
+        color: var(--ink);
+        background: radial-gradient(800px 400px at 10% 10%, #f8f1df 0%, transparent 60%),
+          radial-gradient(700px 380px at 90% 0%, #efe0b8 0%, transparent 55%),
+          repeating-linear-gradient(45deg, rgba(120, 86, 40, 0.05), rgba(120, 86, 40, 0.05) 12px, rgba(120, 86, 40, 0.02) 12px, rgba(120, 86, 40, 0.02) 24px),
+          #e9d3a5;
+      }
+
+      .page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 48px 24px 80px;
+        display: grid;
+        gap: 28px;
+      }
+
+      .certificate {
+        position: relative;
+        background: linear-gradient(140deg, var(--parchment) 0%, #f3dbab 45%, var(--parchment-dark) 100%);
+        border: 2px solid var(--gold);
+        border-radius: 28px;
+        padding: 40px 38px 36px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        animation: fadeRise 500ms ease-out;
+      }
+
+      .certificate::before {
+        content: "";
+        position: absolute;
+        inset: 14px;
+        border: 1px dashed rgba(91, 66, 49, 0.35);
+        border-radius: 22px;
+        pointer-events: none;
+      }
+
+      .certificate::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(400px 220px at 80% 120%, rgba(139, 47, 47, 0.08), transparent 70%),
+          radial-gradient(360px 200px at 0% 100%, rgba(46, 27, 15, 0.08), transparent 65%);
+        pointer-events: none;
+      }
+
+      .certificate-header {
+        text-align: center;
+        display: grid;
+        gap: 10px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .crest {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        margin-bottom: 8px;
+      }
+
+      .crest-mark {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 2px solid var(--gold);
+        background: radial-gradient(circle at 30% 30%, #f9e7b5, #d2a24d 65%, #8c6327 100%);
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        color: #3a2416;
+        letter-spacing: 0.12em;
+      }
+
+      .crest-text {
+        display: grid;
+        gap: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        font-size: 0.7rem;
+        color: var(--ink-soft);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 4vw, 3.2rem);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .subtitle {
+        font-size: 1.05rem;
+        color: var(--ink-soft);
+      }
+
+      .divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        margin: 18px 0 6px;
+      }
+
+      .intro {
+        margin: 0 auto;
+        max-width: 700px;
+        font-size: 1.05rem;
+        color: var(--ink-soft);
+      }
+
+      .upload-grid {
+        margin-top: 20px;
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+
+      .file-card {
+        position: relative;
+        padding: 18px 18px 20px;
+        border-radius: 16px;
+        border: 1px solid rgba(46, 27, 15, 0.2);
+        background: rgba(255, 250, 240, 0.7);
+        display: grid;
+        gap: 10px;
+        min-height: 120px;
+        cursor: pointer;
+        transition: transform 200ms ease, box-shadow 200ms ease;
+      }
+
+      .file-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 18px rgba(46, 27, 15, 0.18);
+      }
+
+      .file-card input[type="file"] {
+        opacity: 0;
+        position: absolute;
+        inset: 0;
+        cursor: pointer;
+      }
+
+      .file-title {
+        font-weight: 700;
+        font-size: 1rem;
+      }
+
+      .file-hint {
+        font-size: 0.9rem;
+        color: var(--ink-soft);
+      }
+
+      .file-name {
+        font-size: 0.95rem;
+        color: var(--gold-deep);
+        font-weight: 700;
+      }
+
+      .actions {
+        margin-top: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      button {
+        appearance: none;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 999px;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #fef9ed;
+        background: radial-gradient(circle at 20% 20%, #b74b4b, #7b2323 65%, #4b1414 100%);
+        box-shadow: 0 14px 24px rgba(90, 26, 26, 0.35);
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        transition: transform 200ms ease, box-shadow 200ms ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px) scale(1.01);
+        box-shadow: 0 18px 30px rgba(90, 26, 26, 0.4);
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+
+      .status {
+        font-size: 0.95rem;
+        color: var(--ink-soft);
+      }
+
+      .signature-row {
+        margin-top: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .signature {
+        display: grid;
+        gap: 6px;
+        font-size: 0.9rem;
+        color: var(--ink-soft);
+      }
+
+      .sig-line {
+        width: 180px;
+        height: 1px;
+        background: rgba(46, 27, 15, 0.4);
+      }
+
+      .seal {
+        width: 86px;
+        height: 86px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, #c65c5c, var(--seal) 60%, var(--seal-dark) 100%);
+        border: 4px solid rgba(255, 230, 170, 0.6);
+        color: #f6e7c8;
+        font-weight: 700;
+        display: grid;
+        place-items: center;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-size: 0.85rem;
+        box-shadow: inset 0 6px 10px rgba(0, 0, 0, 0.25);
+      }
+
+      .results-panel {
+        padding: 28px 30px;
+        border-radius: 24px;
+        background: rgba(255, 248, 232, 0.7);
+        border: 1px solid rgba(46, 27, 15, 0.2);
+        box-shadow: var(--shadow);
+        display: grid;
+        gap: 18px;
+      }
+
+      .section-title {
+        margin: 0;
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--ink-soft);
+      }
+
+      .results {
+        display: grid;
+        gap: 14px;
+      }
+
+      .grade-card {
+        background: rgba(255, 255, 255, 0.75);
+        border-radius: 18px;
+        padding: 18px 20px;
+        border: 1px solid rgba(46, 27, 15, 0.1);
+        display: grid;
+        gap: 8px;
+        animation: fadeRise 400ms ease-out forwards;
+        opacity: 0;
+      }
+
+      .grade-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .grade-index {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: rgba(201, 164, 76, 0.2);
+        color: var(--gold-deep);
+        font-weight: 700;
+        display: grid;
+        place-items: center;
+      }
+
+      .grade-title {
+        margin: 0;
+        font-size: 1.1rem;
+      }
+
+      .result-field {
+        display: grid;
+        gap: 4px;
+      }
+
+      .result-label {
+        text-transform: uppercase;
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        color: var(--ink-soft);
+        font-weight: 700;
+      }
+
+      .result-text {
+        margin: 0;
+        white-space: pre-wrap;
+        line-height: 1.5;
+      }
+
+      .raw-panel {
+        padding: 22px 24px;
+        border-radius: 20px;
+        border: 1px dashed rgba(46, 27, 15, 0.25);
+        background: rgba(255, 248, 232, 0.5);
+        display: grid;
+        gap: 12px;
+      }
+
+      .raw-output {
+        margin: 0;
+        padding: 14px;
+        border-radius: 12px;
+        background: rgba(46, 27, 15, 0.08);
+        font-family: "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      @keyframes fadeRise {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 720px) {
+        .page {
+          padding: 32px 16px 60px;
+        }
+
+        .certificate {
+          padding: 30px 24px;
+        }
+
+        .crest {
+          flex-direction: column;
+        }
+
+        .signature-row {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="certificate">
+        <header class="certificate-header">
+          <div class="crest">
+            <div class="crest-mark">H</div>
+            <div class="crest-text">
+              <span>Hogwarts School of Grading</span>
+              <span>Office of Examinations</span>
+            </div>
+          </div>
+          <h1>Official Grading Diploma</h1>
+          <div class="subtitle">Issued under the authority of the Hogwarts Registrar</div>
+          <div class="divider"></div>
+          <p class="intro">
+            Present the guide and student responses as plain text. GRADY delivers a concise
+            grade and a short commentary for each inferred question.
+          </p>
+        </header>
+
+        <div class="upload-grid">
+          <label class="file-card" for="guide">
+            <span class="file-title">Guide Scroll</span>
+            <span class="file-hint">guide.txt (rubrics, questions, expectations)</span>
+            <span class="file-name" id="guide-name">No file selected</span>
+            <input type="file" id="guide" accept=".txt" />
+          </label>
+
+          <label class="file-card" for="student">
+            <span class="file-title">Student Scroll</span>
+            <span class="file-hint">student_answers.txt (raw responses)</span>
+            <span class="file-name" id="student-name">No file selected</span>
+            <input type="file" id="student" accept=".txt" />
+          </label>
+        </div>
+
+        <div class="actions">
+          <button id="grade-btn" type="button">Seal &amp; Grade</button>
+          <div class="status" id="status" role="status" aria-live="polite"></div>
+        </div>
+
+        <div class="signature-row">
+          <div class="signature">
+            <span class="sig-line"></span>
+            <span>Registrar</span>
+          </div>
+          <div class="seal">Seal</div>
+        </div>
+      </section>
+
+      <section class="results-panel">
+        <h2 class="section-title">Grades Ledger</h2>
+        <div class="results" id="results"></div>
+      </section>
+
+      <section class="raw-panel" id="raw-panel">
+        <div class="result-label">Raw Scrying Output</div>
+        <pre class="raw-output" id="raw-output">Awaiting output...</pre>
+      </section>
+    </main>
+
+    <script>
+      const guideInput = document.getElementById("guide");
+      const studentInput = document.getElementById("student");
+      const guideName = document.getElementById("guide-name");
+      const studentName = document.getElementById("student-name");
+      const gradeBtn = document.getElementById("grade-btn");
+      const statusEl = document.getElementById("status");
+      const resultsEl = document.getElementById("results");
+      const rawOutputEl = document.getElementById("raw-output");
+
+      const updateFileLabel = (input, label) => {
+        label.textContent = input.files?.[0]?.name || "No file selected";
+      };
+
+      guideInput.addEventListener("change", () => updateFileLabel(guideInput, guideName));
+      studentInput.addEventListener("change", () => updateFileLabel(studentInput, studentName));
+
+      const readFile = (file) =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result || "");
+          reader.onerror = () => reject(reader.error);
+          reader.readAsText(file);
+        });
+
+      const renderField = (label, text) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "result-field";
+
+        const labelEl = document.createElement("div");
+        labelEl.className = "result-label";
+        labelEl.textContent = label;
+
+        const textEl = document.createElement("p");
+        textEl.className = "result-text";
+        textEl.textContent = text ?? "";
+
+        wrapper.appendChild(labelEl);
+        wrapper.appendChild(textEl);
+        return wrapper;
+      };
+
+      const renderResults = (data) => {
+        resultsEl.innerHTML = "";
+
+        const grades = data?.grades || {};
+        const comments = data?.comments || {};
+
+        const keys = Object.keys(grades).sort((a, b) => Number(a) - Number(b));
+        if (!keys.length) {
+          statusEl.textContent = "No grades returned.";
+          return;
+        }
+
+        keys.forEach((key, index) => {
+          const card = document.createElement("article");
+          card.className = "grade-card";
+          card.style.animationDelay = `${index * 70}ms`;
+
+          const header = document.createElement("div");
+          header.className = "grade-header";
+
+          const badge = document.createElement("div");
+          badge.className = "grade-index";
+          badge.textContent = `Q${key}`;
+
+          const title = document.createElement("h3");
+          title.className = "grade-title";
+          title.textContent = `Question ${key}`;
+
+          header.appendChild(badge);
+          header.appendChild(title);
+
+          card.appendChild(header);
+          card.appendChild(renderField("Grade", grades[key] ?? ""));
+          card.appendChild(renderField("Commentary", comments[key] ?? ""));
+
+          resultsEl.appendChild(card);
+        });
+      };
+
+      gradeBtn.addEventListener("click", async () => {
+        const guideFile = guideInput.files?.[0];
+        const studentFile = studentInput.files?.[0];
+
+        if (!guideFile || !studentFile) {
+          statusEl.textContent = "Please choose both guide.txt and student_answers.txt.";
+          return;
+        }
+
+        statusEl.textContent = "Sealing parchment and grading...";
+        gradeBtn.disabled = true;
+        resultsEl.innerHTML = "";
+        rawOutputEl.textContent = "Awaiting output...";
+
+        try {
+          const [guideText, studentText] = await Promise.all([
+            readFile(guideFile),
+            readFile(studentFile),
+          ]);
+
+          const response = await fetch("/grade", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              guide: guideText,
+              student_answers: studentText,
+            }),
+          });
+
+          const responseText = await response.text();
+
+          if (!response.ok) {
+            let detail = response.statusText;
+            try {
+              const errorBody = JSON.parse(responseText || "{}");
+              detail = errorBody.detail || detail;
+            } catch (parseError) {
+              // Leave detail as-is if response isn't JSON.
+            }
+            statusEl.textContent = `Error: ${detail}`;
+            rawOutputEl.textContent = responseText || "Raw output not available.";
+            gradeBtn.disabled = false;
+            return;
+          }
+
+          let parsed = null;
+          try {
+            parsed = JSON.parse(responseText);
+          } catch (parseError) {
+            parsed = null;
+          }
+
+          if (parsed && parsed.grades && parsed.comments) {
+            statusEl.textContent = "";
+            renderResults(parsed);
+          } else {
+            statusEl.textContent = "Received non-JSON output. Showing raw output only.";
+          }
+
+          rawOutputEl.textContent = responseText || "Raw output not available.";
+
+          const runId = response.headers.get("X-Grady-Run-Id");
+          if (runId) {
+            const rawResponse = await fetch(`/grade/raw?run_id=${encodeURIComponent(runId)}`);
+            if (rawResponse.ok) {
+              const rawData = await rawResponse.json();
+              rawOutputEl.textContent = rawData.raw_output || rawOutputEl.textContent;
+            }
+          }
+        } catch (error) {
+          statusEl.textContent = "Something went wrong while grading.";
+        } finally {
+          gradeBtn.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

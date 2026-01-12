@@ -1,0 +1,57 @@
+Logfire project URL: https://logfire-us.pydantic.dev/dualdproductions/grady
+INFO:     Started server process [63209]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+20:38:36.661 POST /grade
+20:38:36.699   Grading request received
+20:38:39.351   Raw model output (pre-validation)
+
+Raw model output (pre-validation, cleaned): {
+  "grades": {
+    "1": 10,
+    "2": 10
+  },
+  "comments": {
+    "1": "Correct answer.",
+    "2": "Correct, red is a primary color."
+  }
+}
+1: AgentRunResult(output='```json\n{\n  "grades": {\n    "1": 10,\n    "2": 10\n  },\n  "comments": {\n    "1": "Correct answer.",\n    "2": "Correct, red is a primary color."\n  }\n}\n```')
+INFO:     127.0.0.1:51256 - "POST /grade HTTP/1.1" 200 OK
+20:38:58.113 GET /
+INFO:     127.0.0.1:51348 - "GET / HTTP/1.1" 200 OK
+20:39:14.525 POST /grade
+20:39:14.526   Grading request received
+20:39:27.574   Raw model output (pre-validation)
+
+Raw model output (pre-validation, cleaned): {
+  "grades": {
+    "1": "7",
+    "2": "6",
+    "3": "6",
+    "4": "5",
+    "5": "8",
+    "6": "7",
+    "7": "6",
+    "8": "6",
+    "9": "7",
+    "10": "5"
+  },
+  "comments": {
+    "1": "רקע היסטורי טוב אך חסר עומק בהקשר רחב יותר",
+    "2": "מטרות הארגון מוצגות בבהירות אך בקצרה מדי",
+    "3": "תיאור פעילות סביר אך חסרים פרטים על שנים אחרונות",
+    "4": "הצלחות וכישלונות מוזכרים אך הניתוח שטחי למדי",
+    "5": "כתבות רלוונטיות ומגוונות, בחירה טובה של מקורות",
+    "6": "זיהוי עמדות קיים אך לא מעמיק מספיק",
+    "7": "ביסוס טענות חלקי, חסרות ציטוטים ישירים מהכתבות",
+    "8": "ניתוח תקשורתי בסיסי, חסר עומק וניתוח מתודולוגי",
+    "9": "עמדות אישיות קיימות אך קצרות ולא מפותחות מספיק",
+    "10": "ארגון סביר, חסרה ביבליוגרפיה פורמלית ומקורות נוספים"
+  }
+}
+1: AgentRunResult(output='```json\n{\n  "grades": {\n    "1": "7",\n    "2": "6",\n    "3": "6",\n    "4": "5",\n    "5": "8",\n    "6": "7",\n    "7": "6",\n    "8": "6",\n    "9": "7",\n    "10": "5"\n  },\n  "comments": {\n    "1": "רקע היסטורי טוב אך חסר עומק בהקשר רחב יותר",\n    "2": "מטרות הארגון מוצגות בבהירות אך בקצרה מדי",\n    "3": "תיאור פעילות סביר אך חסרים פרטים על שנים אחרונות",\n    "4": "הצלחות וכישלונות מוזכרים אך הניתוח שטחי למדי",\n    "5": "כתבות רלוונטיות ומגוונות, בחירה טובה של מקורות",\n    "6": "זיהוי עמדות קיים אך לא מעמיק מספיק",\n    "7": "ביסוס טענות חלקי, חסרות ציטוטים ישירים מהכתבות",\n    "8": "ניתוח תקשורתי בסיסי, חסר עומק וניתוח מתודולוגי",\n    "9": "עמדות אישיות קיימות אך קצרות ולא מפותחות מספיק",\n    "10": "ארגון סביר, חסרה ביבליוגרפיה פורמלית ומקורות נוספים"\n  }\n}\n```')
+INFO:     127.0.0.1:51415 - "POST /grade HTTP/1.1" 200 OK
+20:39:27.585 GET /grade/raw ? run_id='1009a9162…32c3e9980'
+INFO:     127.0.0.1:51415 - "GET /grade/raw?run_id=1009a9162d214ea8a9f54c532c3e9980 HTTP/1.1" 200 OK
