@@ -43,7 +43,8 @@ SYSTEM_PROMPT = (
     "Each highlight object must include: start (0-based index, inclusive), end (0-based index, exclusive), effect (\"add\" or \"deduct\"), points (number), reason (short phrase).\n"
     "The start/end indices must refer to the exact substring in answers[k].\n"
     "Keep the question order as it appears in the guide. If an answer is missing, output an empty string, score 0, and a short comment.\n"
-    "Do not output any extra keys, metadata, markdown, or explanation - only JSON."
+    "Do not output any extra keys, metadata, markdown, or explanation - only JSON.\n"
+    "Make it less than 8100 tokens in total."
 )
 
 USER_PROMPT_TEMPLATE = (
