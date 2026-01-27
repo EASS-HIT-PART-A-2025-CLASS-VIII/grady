@@ -1,21 +1,56 @@
 <!doctype html>
-<html lang="en">
+<html lang="he">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GRADY</title>
     <style>
+      @import url("https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap");
+
       :root {
         color-scheme: light;
-        --parchment: #f6e7c8;
-        --parchment-dark: #e4c890;
-        --ink: #2e1b0f;
-        --ink-soft: #5b4231;
-        --gold: #c9a44c;
-        --gold-deep: #9a7636;
-        --seal: #8b2f2f;
-        --seal-dark: #5a1a1a;
-        --shadow: 0 18px 40px rgba(28, 19, 12, 0.25);
+        --board: #f7f1e8;
+        --board-deep: #efe3d4;
+        --chalk: #2b2420;
+        --chalk-dim: #5a4f47;
+        --chalk-soft: #8a7c70;
+        --line: rgba(31, 29, 26, 0.14);
+        --panel: rgba(255, 252, 247, 0.92);
+        --panel-strong: rgba(255, 252, 247, 0.98);
+        --accent: #1a8f6a;
+        --accent-strong: #137453;
+        --warn: #b06a00;
+        --danger: #bf3f3f;
+        --shadow: 0 18px 40px rgba(16, 18, 20, 0.12);
+        --border: rgba(58, 44, 34, 0.14);
+        --border-strong: rgba(58, 44, 34, 0.22);
+        --button-bg: rgba(58, 44, 34, 0.05);
+        --button-border: rgba(58, 44, 34, 0.22);
+        --ghost-bg: rgba(58, 44, 34, 0.04);
+        --ghost-border: rgba(58, 44, 34, 0.28);
+        --input-bg: rgba(255, 248, 240, 0.92);
+        --input-border: rgba(58, 44, 34, 0.22);
+        --card-bg: rgba(255, 252, 247, 0.94);
+        --card-border: rgba(58, 44, 34, 0.14);
+        --highlight-add-bg: rgba(26, 156, 109, 0.18);
+        --highlight-add-border: rgba(26, 156, 109, 0.8);
+        --highlight-deduct-bg: rgba(200, 61, 61, 0.16);
+        --highlight-deduct-border: rgba(200, 61, 61, 0.8);
+        --mark-add-bg: rgba(26, 156, 109, 0.16);
+        --mark-add-border: rgba(26, 156, 109, 0.4);
+        --mark-deduct-bg: rgba(200, 61, 61, 0.14);
+        --mark-deduct-border: rgba(200, 61, 61, 0.4);
+        --raw-panel-bg: rgba(255, 252, 247, 0.92);
+        --raw-code-bg: rgba(58, 44, 34, 0.05);
+        --placeholder: rgba(58, 44, 34, 0.5);
+        --answer-bg: rgba(255, 245, 232, 0.9);
+        --answer-border: rgba(176, 112, 61, 0.28);
+        --answer-shadow: 0 10px 24px rgba(60, 40, 25, 0.08);
+        --tooltip-bg: rgba(43, 36, 32, 0.95);
+        --tooltip-text: #fffaf5;
+        --tooltip-shadow: 0 14px 28px rgba(40, 28, 20, 0.25);
+        --tooltip-add-bg: rgba(20, 92, 66, 0.95);
+        --tooltip-deduct-bg: rgba(140, 42, 42, 0.95);
       }
 
       * {
@@ -25,137 +60,370 @@
       body {
         margin: 0;
         min-height: 100vh;
-        font-family: "Goudy Old Style", "Garamond", "Palatino Linotype", "Book Antiqua", "Georgia", serif;
-        color: var(--ink);
-        background: radial-gradient(800px 400px at 10% 10%, #f8f1df 0%, transparent 60%),
-          radial-gradient(700px 380px at 90% 0%, #efe0b8 0%, transparent 55%),
-          repeating-linear-gradient(45deg, rgba(120, 86, 40, 0.05), rgba(120, 86, 40, 0.05) 12px, rgba(120, 86, 40, 0.02) 12px, rgba(120, 86, 40, 0.02) 24px),
-          #e9d3a5;
+        font-family: "Heebo", "Rubik", "Assistant", "Arial", sans-serif;
+        color: var(--chalk);
+        direction: rtl;
+        text-align: right;
+        background:
+          radial-gradient(900px 520px at 12% 0%, rgba(210, 188, 168, 0.42), transparent 60%),
+          radial-gradient(760px 420px at 90% 8%, rgba(232, 210, 186, 0.52), transparent 60%),
+          repeating-linear-gradient(3deg, rgba(0, 0, 0, 0.02) 0 1px, transparent 1px 6px),
+          repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.015) 0 1px, transparent 1px 12px),
+          var(--board);
       }
 
-      .page {
-        max-width: 1100px;
+      body[data-lang="en"] {
+        direction: ltr;
+        text-align: left;
+      }
+
+      body[data-theme="dark"] {
+        color-scheme: dark;
+        --board: #050705;
+        --board-deep: #0b100c;
+        --chalk: #fbf9f3;
+        --chalk-dim: #ddd6c9;
+        --chalk-soft: #bdb4a4;
+        --line: rgba(251, 249, 243, 0.22);
+        --panel: rgba(9, 13, 10, 0.82);
+        --panel-strong: rgba(13, 19, 14, 0.96);
+        --accent: #8ef0b1;
+        --accent-strong: #56e09a;
+        --warn: #ffd06b;
+        --danger: #ff7a7a;
+        --shadow: 0 20px 46px rgba(0, 0, 0, 0.55);
+        --border: rgba(251, 249, 243, 0.2);
+        --border-strong: rgba(251, 249, 243, 0.3);
+        --button-bg: rgba(251, 249, 243, 0.12);
+        --button-border: rgba(251, 249, 243, 0.3);
+        --ghost-bg: rgba(251, 249, 243, 0.08);
+        --ghost-border: rgba(251, 249, 243, 0.4);
+        --input-bg: rgba(5, 8, 6, 0.7);
+        --input-border: rgba(251, 249, 243, 0.28);
+        --card-bg: rgba(9, 13, 10, 0.82);
+        --card-border: rgba(251, 249, 243, 0.2);
+        --highlight-add-bg: rgba(142, 240, 177, 0.25);
+        --highlight-add-border: rgba(86, 224, 154, 0.9);
+        --highlight-deduct-bg: rgba(255, 122, 122, 0.25);
+        --highlight-deduct-border: rgba(255, 122, 122, 0.9);
+        --mark-add-bg: rgba(142, 240, 177, 0.25);
+        --mark-add-border: rgba(142, 240, 177, 0.6);
+        --mark-deduct-bg: rgba(255, 122, 122, 0.22);
+        --mark-deduct-border: rgba(255, 122, 122, 0.6);
+        --raw-panel-bg: rgba(10, 14, 12, 0.6);
+        --raw-code-bg: rgba(255, 255, 255, 0.08);
+        --placeholder: rgba(251, 249, 243, 0.5);
+        --answer-bg: rgba(12, 18, 14, 0.72);
+        --answer-border: rgba(251, 249, 243, 0.18);
+        --answer-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        --tooltip-bg: rgba(10, 14, 12, 0.95);
+        --tooltip-text: #fffaf0;
+        --tooltip-shadow: 0 14px 28px rgba(0, 0, 0, 0.55);
+        --tooltip-add-bg: rgba(18, 76, 48, 0.95);
+        --tooltip-deduct-bg: rgba(110, 28, 28, 0.95);
+        background:
+          radial-gradient(900px 520px at 12% 0%, rgba(90, 140, 115, 0.35), transparent 60%),
+          radial-gradient(760px 420px at 90% 8%, rgba(70, 120, 100, 0.35), transparent 60%),
+          repeating-linear-gradient(3deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 6px),
+          repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 12px),
+          var(--board);
+      }
+
+      .board {
+        max-width: 1180px;
         margin: 0 auto;
-        padding: 48px 24px 80px;
+        padding: 32px 24px 80px;
         display: grid;
-        gap: 28px;
+        gap: 26px;
       }
 
-      .certificate {
-        position: relative;
-        background: linear-gradient(140deg, var(--parchment) 0%, #f3dbab 45%, var(--parchment-dark) 100%);
-        border: 2px solid var(--gold);
-        border-radius: 28px;
-        padding: 40px 38px 36px;
-        box-shadow: var(--shadow);
-        overflow: hidden;
-        animation: fadeRise 500ms ease-out;
-      }
-
-      .certificate::before {
-        content: "";
-        position: absolute;
-        inset: 14px;
-        border: 1px dashed rgba(91, 66, 49, 0.35);
-        border-radius: 22px;
-        pointer-events: none;
-      }
-
-      .certificate::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(400px 220px at 80% 120%, rgba(139, 47, 47, 0.08), transparent 70%),
-          radial-gradient(360px 200px at 0% 100%, rgba(46, 27, 15, 0.08), transparent 65%);
-        pointer-events: none;
-      }
-
-      .certificate-header {
-        text-align: center;
+      .top-bar {
         display: grid;
+        grid-template-columns: minmax(220px, 1fr) minmax(0, 2.2fr) minmax(220px, 1fr);
+        gap: 20px;
+        align-items: start;
+      }
+
+      .top-left {
+        display: grid;
+        gap: 12px;
+        align-content: start;
+      }
+
+      .top-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
         gap: 10px;
-        position: relative;
-        z-index: 1;
       }
 
-      .crest {
+      button {
+        font-family: inherit;
+        color: inherit;
+        background: transparent;
+        border: 1px solid transparent;
+        cursor: pointer;
+      }
+
+      .primary-btn {
+        padding: 12px 22px;
+        border-radius: 999px;
+        border: 1px solid var(--button-border);
+        background: linear-gradient(130deg, var(--button-bg), rgba(0, 0, 0, 0.01));
+        color: var(--chalk);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        box-shadow: var(--shadow);
+        transition: transform 180ms ease, box-shadow 180ms ease;
+      }
+
+      .upload-actions {
+        margin-top: 16px;
+      }
+
+      .primary-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 22px 40px rgba(0, 0, 0, 0.55);
+      }
+
+      .primary-btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+
+      .ghost-btn {
+        padding: 10px 18px;
+        border-radius: 999px;
+        border: 1px dashed var(--ghost-border);
+        background: var(--ghost-bg);
+        color: var(--chalk);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        transition: transform 180ms ease, box-shadow 180ms ease;
+      }
+
+      .ghost-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 16px 28px rgba(0, 0, 0, 0.5);
+      }
+
+      .menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .menu-toggle svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .is-hidden {
+        display: none !important;
+      }
+
+      .global-edit-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .global-edit-btn svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .global-edit-btn.is-active {
+        border-style: solid;
+        border-color: rgba(26, 143, 106, 0.5);
+        background: rgba(26, 143, 106, 0.12);
+        color: var(--accent-strong);
+      }
+
+      .file-upload {
+        position: relative;
+        overflow: hidden;
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+      }
+
+      .file-upload input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+
+      .menu-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 200ms ease;
+        z-index: 40;
+      }
+
+      .menu-overlay.is-open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .side-menu {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: auto;
+        width: min(320px, 85vw);
+        background: var(--panel-strong);
+        border-left: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        transform: translateX(110%);
+        transition: transform 240ms ease;
+        z-index: 50;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
         gap: 16px;
-        margin-bottom: 8px;
       }
 
-      .crest-mark {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        border: 2px solid var(--gold);
-        background: radial-gradient(circle at 30% 30%, #f9e7b5, #d2a24d 65%, #8c6327 100%);
-        display: grid;
-        place-items: center;
-        font-weight: 700;
-        color: #3a2416;
+      .side-menu.is-open {
+        transform: translateX(0);
+      }
+
+      .menu-title {
+        font-weight: 600;
         letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--chalk-soft);
+        font-size: 0.75rem;
       }
 
-      .crest-text {
+      .menu-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .menu-action {
+        width: 100%;
+        justify-content: center;
+      }
+
+      body:not([data-dev="true"]) .dev-only {
+        display: none !important;
+      }
+
+      .status {
+        font-size: 0.95rem;
+        color: var(--chalk-dim);
+        min-height: 1.2em;
+      }
+
+      .panel-title {
+        font-size: 1.25rem;
+        letter-spacing: 0.08em;
+        text-transform: lowercase;
+        color: var(--chalk);
+      }
+
+      .overall-panel,
+      .overall-grade {
+        border-radius: 20px;
+        border: 1px solid var(--card-border);
+        background: var(--card-bg);
+        padding: 16px 18px;
         display: grid;
-        gap: 4px;
+        gap: 10px;
+        box-shadow: var(--shadow);
+      }
+
+      .overall-input {
+        width: 100%;
+        min-height: 120px;
+        border-radius: 14px;
+        border: 1px dashed var(--border);
+        padding: 12px 14px;
+        background: var(--input-bg);
+        color: var(--chalk);
+        font-family: inherit;
+        font-size: 1.15rem;
+        line-height: 1.4;
+        resize: vertical;
+      }
+
+      .overall-input::placeholder {
+        color: var(--placeholder);
+      }
+
+      .overall-score {
+        display: flex;
+        align-items: flex-end;
+        gap: 6px;
+        font-size: 2.6rem;
+        font-weight: 600;
+        color: var(--warn);
+        direction: ltr;
+      }
+
+      .overall-max {
+        font-size: 1.4rem;
+        color: var(--chalk-dim);
+      }
+
+      .overall-hint {
+        font-size: 0.8rem;
         text-transform: uppercase;
         letter-spacing: 0.2em;
-        font-size: 0.7rem;
-        color: var(--ink-soft);
+        color: var(--chalk-soft);
       }
 
-      h1 {
-        margin: 0;
-        font-size: clamp(2rem, 4vw, 3.2rem);
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .subtitle {
-        font-size: 1.05rem;
-        color: var(--ink-soft);
-      }
-
-      .divider {
-        height: 1px;
-        background: linear-gradient(90deg, transparent, var(--gold), transparent);
-        margin: 18px 0 6px;
-      }
-
-      .intro {
-        margin: 0 auto;
-        max-width: 700px;
-        font-size: 1.05rem;
-        color: var(--ink-soft);
-      }
-
-      .upload-grid {
-        margin-top: 20px;
+      .upload-strip {
         display: grid;
-        gap: 16px;
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+      }
+
+      .upload-strip.is-hidden {
+        display: none;
+      }
+
+      .new-exam-btn {
+        border-radius: 999px;
+        border: 1px solid var(--button-border);
+        background: var(--button-bg);
+        color: var(--chalk);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        padding: 8px 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .new-exam-icon {
+        width: 16px;
+        height: 16px;
+        display: block;
       }
 
       .file-card {
         position: relative;
-        padding: 18px 18px 20px;
+        padding: 16px 18px;
         border-radius: 16px;
-        border: 1px solid rgba(46, 27, 15, 0.2);
-        background: rgba(255, 250, 240, 0.7);
+        border: 1px solid var(--card-border);
+        background: var(--card-bg);
         display: grid;
-        gap: 10px;
-        min-height: 120px;
-        cursor: pointer;
-        transition: transform 200ms ease, box-shadow 200ms ease;
-      }
-
-      .file-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 18px rgba(46, 27, 15, 0.18);
+        gap: 8px;
+        min-height: 110px;
       }
 
       .file-card input[type="file"] {
@@ -166,212 +434,142 @@
       }
 
       .file-title {
-        font-weight: 700;
+        font-weight: 600;
         font-size: 1rem;
       }
 
       .file-hint {
-        font-size: 0.9rem;
-        color: var(--ink-soft);
+        font-size: 0.85rem;
+        color: var(--chalk-soft);
       }
 
       .file-name {
-        font-size: 0.95rem;
-        color: var(--gold-deep);
-        font-weight: 700;
-      }
-
-      .actions {
-        margin-top: 18px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      button {
-        appearance: none;
-        border: none;
-        padding: 14px 28px;
-        border-radius: 999px;
-        font-size: 1rem;
-        font-weight: 700;
-        color: #fef9ed;
-        background: radial-gradient(circle at 20% 20%, #b74b4b, #7b2323 65%, #4b1414 100%);
-        box-shadow: 0 14px 24px rgba(90, 26, 26, 0.35);
-        cursor: pointer;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        transition: transform 200ms ease, box-shadow 200ms ease;
-      }
-
-      button:hover {
-        transform: translateY(-1px) scale(1.01);
-        box-shadow: 0 18px 30px rgba(90, 26, 26, 0.4);
-      }
-
-      button:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        box-shadow: none;
-      }
-
-      .status {
-        font-size: 0.95rem;
-        color: var(--ink-soft);
-      }
-
-      .signature-row {
-        margin-top: 26px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
-      }
-
-      .signature {
-        display: grid;
-        gap: 6px;
         font-size: 0.9rem;
-        color: var(--ink-soft);
+        color: var(--warn);
+        font-weight: 600;
       }
 
-      .sig-line {
-        width: 180px;
+      .board-divider {
         height: 1px;
-        background: rgba(46, 27, 15, 0.4);
-      }
-
-      .seal {
-        width: 86px;
-        height: 86px;
-        border-radius: 50%;
-        background: radial-gradient(circle at 30% 30%, #c65c5c, var(--seal) 60%, var(--seal-dark) 100%);
-        border: 4px solid rgba(255, 230, 170, 0.6);
-        color: #f6e7c8;
-        font-weight: 700;
-        display: grid;
-        place-items: center;
-        text-transform: uppercase;
-        letter-spacing: 0.14em;
-        font-size: 0.85rem;
-        box-shadow: inset 0 6px 10px rgba(0, 0, 0, 0.25);
+        background: linear-gradient(90deg, transparent, rgba(245, 241, 230, 0.3), transparent);
       }
 
       .results-panel {
-        padding: 28px 30px;
-        border-radius: 24px;
-        background: rgba(255, 248, 232, 0.7);
-        border: 1px solid rgba(46, 27, 15, 0.2);
-        box-shadow: var(--shadow);
         display: grid;
-        gap: 18px;
+        gap: 16px;
+      }
+
+      .results-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
       }
 
       .section-title {
         margin: 0;
-        font-size: 1.5rem;
+        font-size: 1.1rem;
         text-transform: uppercase;
-        letter-spacing: 0.18em;
-        color: var(--ink-soft);
+        letter-spacing: 0.3em;
+        color: var(--chalk-dim);
       }
 
-      .ledger-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        flex-wrap: wrap;
+      .results {
+        display: grid;
+        gap: 18px;
       }
 
-      .total-grade {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 14px 18px;
-        border-radius: 16px;
-        background: rgba(255, 255, 255, 0.7);
-        border: 1px solid rgba(46, 27, 15, 0.15);
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--ink-soft);
-        gap: 10px;
-        min-width: 220px;
-      }
-
-      .total-grade-value {
-        font-size: 1.6rem;
-        color: var(--gold-deep);
-        letter-spacing: 0.05em;
-      }
-
-      .ledger-grid {
-        border-radius: 20px;
-        border: 1px solid rgba(46, 27, 15, 0.2);
-        background: rgba(255, 255, 255, 0.6);
-        overflow-x: hidden;
-      }
-
-      .ledger-head,
       .ledger-row {
         display: grid;
-        grid-template-columns: 64px minmax(0, 2.6fr) minmax(0, 0.8fr) minmax(0, 1.4fr)
-          minmax(0, 0.7fr);
-        gap: 12px;
-        align-items: center;
-        padding: 14px 16px;
-      }
-
-      .ledger-head {
-        font-size: 0.7rem;
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-        color: var(--ink-soft);
-        background: rgba(201, 164, 76, 0.18);
-        font-weight: 700;
-      }
-
-      .ledger-row {
-        border-top: 1px solid rgba(46, 27, 15, 0.12);
+        grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr);
+        gap: 20px;
+        padding: 18px;
+        border-radius: 22px;
+        border: 1px solid var(--card-border);
+        background: var(--card-bg);
+        box-shadow: var(--shadow);
+        animation: fadeRise 400ms ease-out;
       }
 
       .ledger-row.is-overridden {
-        background: rgba(201, 164, 76, 0.12);
+        border-color: rgba(179, 116, 0, 0.6);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
       }
 
-      .ledger-cell {
+      .row-left {
         display: grid;
-        gap: 6px;
-        align-items: center;
-        font-size: 0.95rem;
-        min-width: 0;
+        gap: 12px;
       }
 
-      .cell-q {
-        justify-items: center;
+      .row-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        justify-content: space-between;
+      }
+
+      .row-head-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+        flex: 1;
+      }
+
+      .row-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .row-bottom-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
       }
 
       .question-button {
-        width: 44px;
-        height: 44px;
-        border-radius: 14px;
-        border: 1px solid rgba(46, 27, 15, 0.2);
-        background: rgba(201, 164, 76, 0.2);
-        color: var(--gold-deep);
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+        border: 1px solid var(--border-strong);
+        background: var(--button-bg);
+        color: var(--chalk);
         font-weight: 700;
-        cursor: pointer;
+        font-size: 1rem;
+        letter-spacing: 0.08em;
       }
 
-      .answer-text {
-        font-size: 0.95rem;
-        color: var(--ink);
+      .question-title {
+        font-size: 1.6rem;
+        color: var(--chalk);
+        line-height: 1.2;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        word-break: break-word;
+        min-width: 0;
+      }
+
+      .answer-text {
+        font-size: 1rem;
+        line-height: 1.7;
+        color: var(--chalk-dim);
+        border: 1px solid var(--answer-border);
+        background: var(--answer-bg);
+        border-radius: 14px;
+        padding: 14px 16px;
+        box-shadow: var(--answer-shadow);
+        white-space: pre-wrap;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .answer-text.has-toggle {
+        padding-top: 48px;
       }
 
       .ledger-row.is-expanded .answer-text {
@@ -379,52 +577,98 @@
       }
 
       .answer-toggle {
-        border: none;
-        background: none;
-        padding: 0;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.2em;
-        color: var(--gold-deep);
-        cursor: pointer;
-        justify-self: start;
-      }
-
-      .ai-score {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: var(--gold-deep);
-      }
-
-      .ai-hint {
-        font-size: 0.72rem;
+        position: absolute;
+        top: 10px;
+        inset-inline-end: 10px;
+        border: 1px solid var(--button-border);
+        background: var(--button-bg);
+        color: var(--chalk);
+        padding: 4px 10px;
+        font-size: 0.7rem;
         text-transform: uppercase;
         letter-spacing: 0.18em;
-        color: var(--ink-soft);
+        border-radius: 999px;
+        cursor: pointer;
       }
 
-      .feedback-input {
-        width: 100%;
-        padding: 6px 8px;
-        border-radius: 10px;
-        border: 1px solid rgba(46, 27, 15, 0.2);
-        background: rgba(255, 255, 255, 0.75);
-        font-family: inherit;
-        font-size: 0.9rem;
-        color: var(--ink);
-        resize: vertical;
-        min-height: 2.4em;
+      .fullscreen-btn {
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--button-border);
+        background: var(--button-bg);
+        color: var(--chalk);
+        border-radius: 12px;
+        padding: 0;
+      }
+
+      .fullscreen-icon {
+        width: 18px;
+        height: 18px;
+        display: block;
+      }
+
+      .fullscreen-nav {
         display: none;
+        align-items: center;
+        gap: 6px;
       }
 
-      .feedback-display {
-        font-size: 0.9rem;
-        color: var(--ink);
-        line-height: 1.4;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+      .nav-btn {
+        border: 1px solid var(--button-border);
+        background: var(--button-bg);
+        color: var(--chalk);
+        font-size: 0.7rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        border-radius: 999px;
+        padding: 6px 10px;
+        white-space: nowrap;
+      }
+
+      .nav-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      .exit-fullscreen-row {
+        display: none;
+        margin-top: 10px;
+      }
+
+      .exit-fullscreen-btn {
+        border-radius: 999px;
+        border: 1px solid var(--button-border);
+        background: var(--button-bg);
+        color: var(--chalk);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        padding: 6px 12px;
+      }
+
+      .grade-nav-row {
+        display: none;
+        margin-top: 10px;
+        justify-content: flex-end;
+        gap: 6px;
+      }
+
+      .row-right {
+        display: grid;
+        gap: 14px;
+        align-content: start;
+      }
+
+      .feedback-panel {
+        border-radius: 16px;
+        border: 1px solid var(--card-border);
+        background: var(--card-bg);
+        padding: 14px;
+        display: grid;
+        gap: 10px;
       }
 
       .feedback-toolbar {
@@ -432,35 +676,465 @@
         align-items: center;
         justify-content: space-between;
         gap: 8px;
-        font-size: 0.72rem;
+        font-size: 0.75rem;
         text-transform: uppercase;
-        letter-spacing: 0.18em;
-        color: var(--ink-soft);
+        letter-spacing: 0.2em;
+        color: var(--chalk-soft);
       }
 
       .feedback-edit {
-        border: 1px solid rgba(46, 27, 15, 0.2);
-        background: rgba(255, 255, 255, 0.6);
-        color: var(--ink-soft);
-        font-size: 0.7rem;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
+        border: 1px solid var(--button-border);
+        background: var(--button-bg);
+        color: var(--chalk);
+        font-size: 0.9rem;
+        letter-spacing: 0;
+        text-transform: none;
         border-radius: 999px;
-        padding: 4px 10px;
+        padding: 0;
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .feedback-display {
+        font-size: 0.95rem;
+        color: var(--chalk);
+        line-height: 1.5;
+        white-space: pre-wrap;
+        display: block;
+      }
+
+      .feedback-input {
+        width: 100%;
+        padding: 8px 10px;
+        border-radius: 12px;
+        border: 1px solid var(--input-border);
+        background: var(--input-bg);
+        font-family: inherit;
+        font-size: 0.95rem;
+        color: var(--chalk);
+        resize: vertical;
+        min-height: 2.6em;
+        display: none;
+      }
+
+      .mark-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: var(--chalk-soft);
+      }
+
+      .mark-list {
+        display: grid;
+        gap: 8px;
+      }
+
+      .mark-item {
+        display: grid;
+        grid-template-columns: 28px minmax(0, 1fr) 80px 32px;
+        gap: 8px;
+        align-items: center;
+        font-size: 0.9rem;
+        color: var(--chalk);
+      }
+
+      .mark-item.is-inactive {
+        opacity: 0.6;
+      }
+
+      .mark-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+      }
+
+      .mark-item.add .mark-icon {
+        background: var(--mark-add-bg);
+        color: var(--accent);
+        border: 1px solid var(--mark-add-border);
+      }
+
+      .mark-item.deduct .mark-icon {
+        background: var(--mark-deduct-bg);
+        color: var(--danger);
+        border: 1px solid var(--mark-deduct-border);
+      }
+
+      .mark-text {
+        color: var(--chalk-dim);
+      }
+
+      .mark-points-input {
+        width: 80px;
+        border-radius: 10px;
+        border: 1px solid var(--input-border);
+        background: var(--input-bg);
+        padding: 4px 6px;
+        font-weight: 600;
+        text-align: center;
+        direction: ltr;
+      }
+
+      .mark-points-input[data-effect="add"] {
+        color: var(--accent-strong);
+      }
+
+      .mark-points-input[data-effect="deduct"] {
+        color: var(--danger);
+      }
+
+      .mark-remove {
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--chalk);
+        font-size: 0.9rem;
+        line-height: 1;
+        display: grid;
+        place-items: center;
         cursor: pointer;
       }
 
-      .ledger-row.is-feedback-expanded .feedback-input {
-        min-height: 5.2em;
+      .highlight-controls {
+        display: none;
+        position: fixed;
+        z-index: 20;
+        min-width: 220px;
+        max-width: 320px;
+        gap: 8px;
+        border: 1px solid var(--card-border);
+        background: var(--card-bg);
+        border-radius: 14px;
+        padding: 10px;
+        box-shadow: var(--shadow);
       }
 
-      .ledger-row.is-feedback-expanded .feedback-display {
+      .highlight-controls.is-side {
+        position: static;
+        max-width: none;
+        width: 100%;
+      }
+
+      .ledger-row.is-feedback-editing.has-selection .highlight-controls {
+        display: grid;
+      }
+
+      .ledger-row:not(.is-feedback-editing) .mark-remove {
+        display: none;
+      }
+
+      .ledger-row:not(.is-feedback-editing) .mark-points-input {
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      .selection-preview {
+        border: 1px dashed var(--border);
+        background: var(--raw-code-bg);
+        border-radius: 10px;
+        padding: 6px 8px;
+        font-size: 0.85rem;
+        color: var(--chalk-soft);
+        min-height: 2.2em;
+        white-space: pre-wrap;
+      }
+
+      .highlight-effect-row {
+        display: flex;
+        gap: 8px;
+      }
+
+      .highlight-effect-row .mark-btn {
+        flex: 1;
+        opacity: 0.4;
+        transition: opacity 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+      }
+
+      .highlight-effect-row .mark-btn.is-selected {
+        opacity: 1;
+        transform: translateY(-1px);
+        box-shadow: 0 10px 20px rgba(16, 18, 20, 0.15);
+      }
+
+      .highlight-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .points-input {
+        width: 80px;
+        border-radius: 10px;
+        border: 1px solid var(--input-border);
+        background: var(--input-bg);
+        padding: 6px 8px;
+        font-weight: 600;
+        text-align: center;
+        direction: ltr;
+      }
+
+      .reason-input {
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid var(--input-border);
+        background: var(--input-bg);
+        padding: 6px 10px;
+        font-size: 0.9rem;
+      }
+
+      .mark-btn {
+        border-radius: 999px;
+        border: 1px solid var(--button-border);
+        background: var(--button-bg);
+        color: var(--chalk);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        padding: 6px 12px;
+        cursor: pointer;
+      }
+
+      .mark-btn.add {
+        border-color: var(--mark-add-border);
+        background: var(--mark-add-bg);
+        color: var(--accent-strong);
+      }
+
+      .mark-btn.deduct {
+        border-color: var(--mark-deduct-border);
+        background: var(--mark-deduct-bg);
+        color: var(--danger);
+      }
+
+      .mark-apply-btn {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid var(--button-border);
+        background: linear-gradient(130deg, var(--button-bg), rgba(0, 0, 0, 0.02));
+        color: var(--chalk);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+
+      .mark-apply-btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .highlight-warning {
+        min-height: 1.2em;
+        font-size: 0.8rem;
+        color: var(--danger);
+      }
+
+      .mark-empty {
+        font-size: 0.85rem;
+        color: var(--chalk-soft);
+      }
+
+      .score-panel {
+        border-radius: 16px;
+        border: 1px solid rgba(176, 112, 61, 0.35);
+        background: linear-gradient(160deg, rgba(255, 238, 220, 0.8), rgba(255, 252, 247, 0.95));
+        padding: 10px 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 16px;
+        box-shadow: 0 14px 28px rgba(120, 80, 40, 0.12);
+        justify-content: space-between;
+        direction: ltr;
+      }
+
+      .score-line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        direction: ltr;
+      }
+
+      .score-block {
+        display: grid;
+        gap: 4px;
+        min-width: 140px;
+        flex: 1 1 160px;
+        text-align: right;
+        direction: rtl;
+      }
+
+      .score-block.is-final {
+        order: 1;
+      }
+
+      .score-block.is-suggested {
+        order: 2;
+      }
+
+      .score-label {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: var(--chalk-soft);
+      }
+
+      .ai-score {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--warn);
+        direction: ltr;
+      }
+
+      .score-diff {
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.7);
+        direction: ltr;
+      }
+
+      .score-diff.positive {
+        color: var(--accent-strong);
+        border-color: var(--mark-add-border);
+        background: var(--mark-add-bg);
+      }
+
+      .score-diff.negative {
+        color: var(--danger);
+        border-color: var(--mark-deduct-border);
+        background: var(--mark-deduct-bg);
+      }
+
+      .score-diff.neutral {
+        color: var(--chalk-soft);
+      }
+
+      .ai-hint {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: var(--chalk-soft);
+      }
+
+      .final-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .final-line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        direction: ltr;
+      }
+
+      .final-input {
+        width: 80px;
+        padding: 6px 8px;
+        border-radius: 10px;
+        border: 1px solid var(--input-border);
+        background: var(--input-bg);
+        font-weight: 600;
+        text-align: center;
+        color: var(--chalk);
+        direction: ltr;
+      }
+
+      .final-edit-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        border: 1px solid var(--button-border);
+        background: var(--button-bg);
+        color: var(--chalk);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      .final-edit-btn svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .override-flag {
+        display: none;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: var(--warn);
+        font-weight: 600;
+      }
+
+      .ledger-row.is-overridden .override-flag {
+        display: inline-flex;
+      }
+
+      .ledger-row.is-fullscreen .fullscreen-nav {
+        display: inline-flex;
+      }
+
+      .ledger-row.is-fullscreen .exit-fullscreen-row {
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .ledger-row.is-fullscreen .grade-nav-row {
+        display: flex;
+      }
+
+      .ledger-row:fullscreen,
+      .ledger-row:-webkit-full-screen {
+        border-radius: 0;
+        box-shadow: none;
+        background: var(--panel-strong);
+        padding: 28px;
+        overflow: auto;
+      }
+
+      .ledger-row:fullscreen .question-title,
+      .ledger-row:-webkit-full-screen .question-title {
         -webkit-line-clamp: unset;
       }
 
+      .ledger-row:fullscreen .answer-text,
+      .ledger-row:-webkit-full-screen .answer-text {
+        -webkit-line-clamp: unset;
+      }
+
+      .ledger-row:fullscreen .feedback-display,
+      .ledger-row:-webkit-full-screen .feedback-display {
+        -webkit-line-clamp: unset;
+      }
+
+      .ledger-row.is-feedback-expanded .feedback-input {
+        min-height: 6em;
+      }
+
+      .ledger-row.is-feedback-expanded .feedback-display {
+        display: block;
+      }
+
       .ledger-row.is-feedback-editing .feedback-input {
-        border-color: rgba(201, 164, 76, 0.6);
-        box-shadow: 0 0 0 2px rgba(201, 164, 76, 0.2);
+        border-color: rgba(242, 193, 109, 0.6);
+        box-shadow: 0 0 0 2px rgba(242, 193, 109, 0.2);
         display: block;
       }
 
@@ -470,35 +1144,33 @@
 
       .highlight-add {
         position: relative;
-        background: rgba(120, 168, 108, 0.3);
-        border-bottom: 2px solid rgba(90, 140, 72, 0.8);
+        background: var(--highlight-add-bg);
+        border-bottom: 2px solid var(--highlight-add-border);
         border-radius: 6px;
         padding: 0 2px;
-        cursor: help;
+        cursor: pointer;
       }
 
       .highlight-deduct {
         position: relative;
-        background: rgba(201, 92, 92, 0.25);
-        border-bottom: 2px solid rgba(156, 58, 58, 0.8);
+        background: var(--highlight-deduct-bg);
+        border-bottom: 2px solid var(--highlight-deduct-border);
         border-radius: 6px;
         padding: 0 2px;
-        cursor: help;
+        cursor: pointer;
       }
 
-      .highlight-add::after,
-      .highlight-deduct::after {
-        content: attr(data-tooltip);
+      .highlight-tooltip {
         position: absolute;
         left: 0;
         bottom: 135%;
-        background: rgba(46, 27, 15, 0.95);
-        color: #fef9ed;
-        padding: 12px 14px;
+        background: var(--tooltip-bg);
+        color: var(--tooltip-text);
+        padding: 10px 12px;
         border-radius: 12px;
-        font-size: 1rem;
+        font-size: 0.9rem;
         line-height: 1.4;
-        box-shadow: 0 12px 24px rgba(28, 19, 12, 0.35);
+        box-shadow: var(--tooltip-shadow);
         max-width: 320px;
         width: max-content;
         opacity: 0;
@@ -507,84 +1179,80 @@
         transition: opacity 160ms ease, transform 160ms ease;
         z-index: 5;
         white-space: normal;
+        cursor: pointer;
       }
 
-      .highlight-add::before,
-      .highlight-deduct::before {
+      .highlight-tooltip::before {
         content: "";
         position: absolute;
         left: 14px;
         bottom: 120%;
         border-width: 8px 6px 0 6px;
         border-style: solid;
-        border-color: rgba(46, 27, 15, 0.95) transparent transparent transparent;
-        opacity: 0;
-        transform: translateY(6px);
-        transition: opacity 160ms ease, transform 160ms ease;
-        z-index: 4;
+        border-color: var(--tooltip-bg) transparent transparent transparent;
       }
 
-      .highlight-add::after {
-        background: rgba(28, 92, 56, 0.92);
+      .highlight-add .highlight-tooltip {
+        background: var(--tooltip-add-bg);
       }
 
-      .highlight-add::before {
-        border-color: rgba(28, 92, 56, 0.92) transparent transparent transparent;
+      .highlight-add .highlight-tooltip::before {
+        border-color: var(--tooltip-add-bg) transparent transparent transparent;
       }
 
-      .highlight-deduct::after {
-        background: rgba(132, 34, 34, 0.92);
+      .highlight-deduct .highlight-tooltip {
+        background: var(--tooltip-deduct-bg);
       }
 
-      .highlight-deduct::before {
-        border-color: rgba(132, 34, 34, 0.92) transparent transparent transparent;
+      .highlight-deduct .highlight-tooltip::before {
+        border-color: var(--tooltip-deduct-bg) transparent transparent transparent;
       }
 
-      .highlight-add:hover::after,
-      .highlight-deduct:hover::after,
-      .highlight-add:hover::before,
-      .highlight-deduct:hover::before {
+      .highlight-add:hover .highlight-tooltip,
+      .highlight-deduct:hover .highlight-tooltip,
+      .highlight-add:focus-within .highlight-tooltip,
+      .highlight-deduct:focus-within .highlight-tooltip {
         opacity: 1;
         transform: translateY(0);
-      }
-        font-size: 0.9rem;
-        color: var(--ink);
-        line-height: 1.4;
+        pointer-events: auto;
       }
 
-      .final-cell {
-        display: flex;
-        align-items: center;
+      .highlight-muted {
+        background: transparent;
+        border-bottom: 1px dashed rgba(245, 241, 230, 0.45);
+        border-radius: 0;
+      }
+
+      .raw-panel {
+        padding: 18px 20px;
+        border-radius: 18px;
+        border: 1px dashed var(--border);
+        background: var(--raw-panel-bg);
+        display: grid;
         gap: 10px;
       }
 
-      .final-input {
-        width: 70px;
-        padding: 6px 8px;
-        border-radius: 10px;
-        border: 1px solid rgba(46, 27, 15, 0.2);
-        background: rgba(255, 255, 255, 0.7);
-        font-weight: 700;
-        text-align: center;
-        color: var(--ink);
-      }
-
-      .override-flag {
-        display: none;
-        font-size: 0.7rem;
+      .result-label {
         text-transform: uppercase;
+        font-size: 0.72rem;
         letter-spacing: 0.2em;
-        color: var(--seal-dark);
-        font-weight: 700;
+        color: var(--chalk-soft);
+        font-weight: 600;
       }
 
-      .ledger-row.is-overridden .override-flag {
-        display: inline-flex;
-      }
-
-      .ledger-body {
-        display: grid;
-        gap: 0;
+      .raw-output {
+        margin: 0;
+        padding: 14px;
+        border-radius: 12px;
+        background: var(--raw-code-bg);
+        font-family: "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        max-height: 300px;
+        overflow-y: auto;
+        direction: ltr;
+        text-align: left;
       }
 
       .modal {
@@ -592,7 +1260,7 @@
         inset: 0;
         display: grid;
         place-items: center;
-        background: rgba(12, 8, 4, 0.4);
+        background: rgba(12, 14, 16, 0.4);
         opacity: 0;
         pointer-events: none;
         transition: opacity 200ms ease;
@@ -606,10 +1274,10 @@
 
       .modal-card {
         max-width: 560px;
-        width: min(90vw, 560px);
-        background: linear-gradient(140deg, var(--parchment) 0%, #f3dbab 45%, var(--parchment-dark) 100%);
+        width: min(92vw, 560px);
+        background: var(--panel-strong);
         border-radius: 18px;
-        border: 1px solid rgba(46, 27, 15, 0.2);
+        border: 1px solid var(--border);
         padding: 24px;
         display: grid;
         gap: 12px;
@@ -623,118 +1291,28 @@
 
       .modal-text {
         font-size: 0.95rem;
-        color: var(--ink);
+        color: var(--chalk);
+        line-height: 1.5;
       }
 
       .modal-close {
         align-self: flex-end;
-        background: rgba(201, 164, 76, 0.2);
-        border: 1px solid rgba(201, 164, 76, 0.4);
-        color: var(--gold-deep);
+        background: rgba(245, 241, 230, 0.1);
+        border: 1px solid rgba(245, 241, 230, 0.25);
+        color: var(--chalk);
         padding: 6px 12px;
         border-radius: 999px;
         cursor: pointer;
-        font-weight: 700;
+        font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.12em;
         font-size: 0.7rem;
       }
 
-      .grade-card {
-        background: rgba(255, 255, 255, 0.75);
-        border-radius: 18px;
-        padding: 18px 20px;
-        border: 1px solid rgba(46, 27, 15, 0.1);
-        display: grid;
-        gap: 8px;
-        animation: fadeRise 400ms ease-out forwards;
-        opacity: 0;
-      }
-
-      .grade-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-      }
-
-      .grade-heading {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .grade-index {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
-        background: rgba(201, 164, 76, 0.2);
-        color: var(--gold-deep);
-        font-weight: 700;
-        display: grid;
-        place-items: center;
-      }
-
-      .grade-title {
-        margin: 0;
-        font-size: 1.1rem;
-      }
-
-      .grade-score {
-        padding: 6px 14px;
-        border-radius: 999px;
-        background: rgba(201, 164, 76, 0.2);
-        border: 1px solid rgba(201, 164, 76, 0.4);
-        color: var(--gold-deep);
-        font-weight: 700;
-        letter-spacing: 0.06em;
-      }
-
-      .result-field {
-        display: grid;
-        gap: 4px;
-      }
-
-      .result-label {
-        text-transform: uppercase;
-        font-size: 0.72rem;
-        letter-spacing: 0.12em;
-        color: var(--ink-soft);
-        font-weight: 700;
-      }
-
-      .result-text {
-        margin: 0;
-        white-space: pre-wrap;
-        line-height: 1.5;
-      }
-
-      .raw-panel {
-        padding: 22px 24px;
-        border-radius: 20px;
-        border: 1px dashed rgba(46, 27, 15, 0.25);
-        background: rgba(255, 248, 232, 0.5);
-        display: grid;
-        gap: 12px;
-      }
-
-      .raw-output {
-        margin: 0;
-        padding: 14px;
-        border-radius: 12px;
-        background: rgba(46, 27, 15, 0.08);
-        font-family: "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
-        font-size: 0.9rem;
-        line-height: 1.5;
-        white-space: pre-wrap;
-        max-height: 300px;
-        overflow-y: auto;
-      }
-
       @keyframes fadeRise {
         from {
           opacity: 0;
-          transform: translateY(12px);
+          transform: translateY(10px);
         }
         to {
           opacity: 1;
@@ -742,121 +1320,160 @@
         }
       }
 
-      @media (max-width: 720px) {
-        .page {
-          padding: 32px 16px 60px;
+      @media (max-width: 1020px) {
+        .top-bar {
+          grid-template-columns: 1fr;
         }
 
-        .certificate {
-          padding: 30px 24px;
-        }
-
-        .crest {
-          flex-direction: column;
-        }
-
-        .signature-row {
-          flex-direction: column;
-          align-items: flex-start;
+        .overall-panel,
+        .overall-grade {
+          width: 100%;
         }
       }
 
       @media (max-width: 960px) {
-        .ledger-head,
         .ledger-row {
-          grid-template-columns: 56px minmax(0, 2.2fr) minmax(0, 0.8fr) minmax(0, 1.2fr)
-            minmax(0, 0.7fr);
-          gap: 10px;
-          padding: 12px 12px;
+          grid-template-columns: 1fr;
         }
 
-        .total-grade {
-          width: 100%;
+        .row-right {
+          grid-template-columns: 1fr;
         }
       }
-    </style>
+
+      @media (max-width: 720px) {
+        .board {
+          padding: 24px 16px 60px;
+        }
+
+        .question-title {
+          font-size: 1.3rem;
+        }
+
+        .overall-score {
+          font-size: 2.2rem;
+        }
+      }
+</style>
   </head>
   <body>
-    <main class="page">
-      <section class="certificate">
-        <header class="certificate-header">
-          <div class="crest">
-            <div class="crest-mark">H</div>
-            <div class="crest-text">
-              <span>Hogwarts School of Grading</span>
-              <span>Office of Examinations</span>
-            </div>
+        <main class="board">
+      <header class="top-bar">
+        <div class="top-left">
+          <div class="top-actions">
+            <button id="menu-toggle" class="ghost-btn menu-toggle" type="button" aria-label="Menu">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path fill="currentColor" d="M3 6h18v2H3zM3 11h18v2H3zM3 16h18v2H3z" />
+              </svg>
+              <span data-i18n="menu">Menu</span>
+            </button>
+            <button id="grade-btn" class="primary-btn is-hidden" type="button">Start</button>
+            <label class="ghost-btn file-upload dev-only">
+              <span data-i18n="load_json">Load JSON</span>
+              <input id="dev-json" type="file" accept=".json,application/json" />
+            </label>
+            <button id="theme-toggle" class="ghost-btn" type="button">Dark UI</button>
+            <button id="lang-toggle" class="ghost-btn" type="button">English</button>
+            <button
+              id="global-edit-btn"
+              class="ghost-btn global-edit-btn is-hidden"
+              type="button"
+              aria-pressed="false"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path fill="currentColor" d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zm17.71-10.04a1.003 1.003 0 0 0 0-1.42l-2.5-2.5a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.99-1.66z"/>
+              </svg>
+              <span data-role="global-edit-label">Edit all</span>
+            </button>
+            <button id="new-exam-btn" class="new-exam-btn" type="button">
+              <svg class="new-exam-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path fill="currentColor" d="M11 3h2v8h8v2h-8v8h-2v-8H3v-2h8V3z" />
+              </svg>
+              <span data-i18n="new_exam">New Exam</span>
+            </button>
           </div>
-          <h1>Official Grading Diploma</h1>
-          <div class="subtitle">Issued under the authority of the Hogwarts Registrar</div>
-          <div class="divider"></div>
-          <p class="intro">
-            Present the guide and student responses as plain text. GRADY delivers a concise
-            grade and a short commentary for each inferred question.
-          </p>
-        </header>
-
-        <div class="upload-grid">
-          <label class="file-card" for="guide">
-            <span class="file-title">Guide Scroll</span>
-            <span class="file-hint">guide.txt (rubrics, questions, expectations)</span>
-            <span class="file-name" id="guide-name">No file selected</span>
-            <input type="file" id="guide" accept=".txt" />
-          </label>
-
-          <label class="file-card" for="student">
-            <span class="file-title">Student Scroll</span>
-            <span class="file-hint">student_answers.txt (raw responses)</span>
-            <span class="file-name" id="student-name">No file selected</span>
-            <input type="file" id="student" accept=".txt" />
-          </label>
-        </div>
-
-        <div class="actions">
-          <button id="grade-btn" type="button">Seal &amp; Grade</button>
           <div class="status" id="status" role="status" aria-live="polite"></div>
         </div>
-
-        <div class="signature-row">
-          <div class="signature">
-            <span class="sig-line"></span>
-            <span>Registrar</span>
-          </div>
-          <div class="seal">Seal</div>
+        <div class="overall-panel is-hidden" id="overall-panel">
+          <div class="panel-title" data-i18n="overall_feedback">Overall feedback</div>
+          <textarea
+            id="overall-feedback"
+            class="overall-input"
+            data-i18n-placeholder="overall_feedback_placeholder"
+            placeholder="General overview and feedback"
+          ></textarea>
         </div>
+        <div class="overall-grade is-hidden" id="overall-grade">
+          <div class="panel-title" data-i18n="overall_grade">Overall grade</div>
+          <div class="overall-score">
+            <span id="total-grade-value">--</span>
+            <span id="total-grade-max" class="overall-max">/--</span>
+          </div>
+          <div class="overall-hint" data-i18n="overall_hint">Sum of final scores</div>
+        </div>
+      </header>
+
+      <div class="menu-overlay" id="menu-overlay" aria-hidden="true"></div>
+      <aside class="side-menu" id="side-menu" aria-hidden="true">
+        <div class="menu-title" data-i18n="menu">Menu</div>
+        <div class="menu-actions">
+          <button id="menu-new-exam-btn" class="new-exam-btn menu-action" type="button">
+            <svg class="new-exam-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M11 3h2v8h8v2h-8v8h-2v-8H3v-2h8V3z" />
+            </svg>
+            <span data-i18n="new_exam">New Exam</span>
+          </button>
+          <button id="dev-toggle-btn" class="ghost-btn menu-action" type="button" aria-pressed="false">
+            <span data-role="dev-toggle-label">Dev mode</span>
+          </button>
+        </div>
+      </aside>
+
+      <section class="upload-strip is-hidden" id="upload-strip">
+        <label class="file-card" for="guide">
+          <span class="file-title" data-i18n="guide_title">Guide</span>
+          <span class="file-hint" data-i18n="guide_hint"
+            >guide.txt (rubrics, questions, expectations)</span
+          >
+          <span class="file-name" id="guide-name">No file selected</span>
+          <input type="file" id="guide" accept=".txt" />
+        </label>
+
+        <label class="file-card" for="student">
+          <span class="file-title" data-i18n="student_title">Student answers</span>
+          <span class="file-hint" data-i18n="student_hint"
+            >student_answers.txt (raw responses)</span
+          >
+          <span class="file-name" id="student-name">No file selected</span>
+          <input type="file" id="student" accept=".txt" />
+        </label>
+        <button id="submit-files-btn" class="primary-btn upload-actions" type="button">
+          <span data-i18n="submit_files">Submit</span>
+        </button>
       </section>
+
+      <div class="board-divider"></div>
 
       <section class="results-panel">
-        <div class="ledger-top">
-          <h2 class="section-title">Grades Ledger</h2>
-          <div class="total-grade">
-            <span>Total Grade</span>
-            <span class="total-grade-value" id="total-grade-value">—</span>
-          </div>
+        <div class="results-header">
+          <h2 class="section-title" data-i18n="questions">Questions</h2>
         </div>
-        <div class="ledger-grid">
-          <div class="ledger-head">
-            <div>Q</div>
-            <div>Answer</div>
-            <div>Grade</div>
-            <div>Feedback</div>
-            <div>Final</div>
-          </div>
-          <div class="ledger-body" id="results"></div>
-        </div>
+        <div class="results" id="results"></div>
       </section>
 
-      <section class="raw-panel" id="raw-panel">
-        <div class="result-label">Raw Scrying Output</div>
-        <pre class="raw-output" id="raw-output">Awaiting output...</pre>
+      <section class="raw-panel dev-only" id="raw-panel">
+        <div class="result-label" data-i18n="raw_output">Raw model output</div>
+        <pre class="raw-output" id="raw-output" data-i18n="awaiting_output">Awaiting output...</pre>
       </section>
     </main>
 
     <div class="modal" id="question-modal" aria-hidden="true">
       <div class="modal-card">
-        <h3 class="modal-title" id="modal-title">Question</h3>
+        <h3 class="modal-title" id="modal-title" data-i18n="modal_question">Question</h3>
         <div class="modal-text" id="modal-text"></div>
-        <button class="modal-close" id="modal-close" type="button">Close</button>
+        <button class="modal-close" id="modal-close" type="button" data-i18n="close">
+          Close
+        </button>
       </div>
     </div>
 
@@ -866,21 +1483,75 @@
       const guideName = document.getElementById("guide-name");
       const studentName = document.getElementById("student-name");
       const gradeBtn = document.getElementById("grade-btn");
+      const devJsonInput = document.getElementById("dev-json");
+      const themeToggleBtn = document.getElementById("theme-toggle");
+      const langToggleBtn = document.getElementById("lang-toggle");
+      const globalEditBtn = document.getElementById("global-edit-btn");
+      const menuToggleBtn = document.getElementById("menu-toggle");
+      const sideMenuEl = document.getElementById("side-menu");
+      const menuOverlayEl = document.getElementById("menu-overlay");
+      const menuNewExamBtn = document.getElementById("menu-new-exam-btn");
+      const devToggleBtn = document.getElementById("dev-toggle-btn");
+      const newExamBtn = document.getElementById("new-exam-btn");
+      const submitFilesBtn = document.getElementById("submit-files-btn");
+      const uploadStrip = document.getElementById("upload-strip");
       const statusEl = document.getElementById("status");
       const resultsEl = document.getElementById("results");
       const rawOutputEl = document.getElementById("raw-output");
       const totalGradeValueEl = document.getElementById("total-grade-value");
+      const totalGradeMaxEl = document.getElementById("total-grade-max");
+      const overallFeedbackEl = document.getElementById("overall-feedback");
+      const overallPanelEl = document.getElementById("overall-panel");
+      const overallGradeEl = document.getElementById("overall-grade");
       const modalEl = document.getElementById("question-modal");
       const modalTitleEl = document.getElementById("modal-title");
       const modalTextEl = document.getElementById("modal-text");
       const modalCloseBtn = document.getElementById("modal-close");
 
       const updateFileLabel = (input, label) => {
-        label.textContent = input.files?.[0]?.name || "No file selected";
+        label.textContent = input.files?.[0]?.name || t("no_file_selected");
+        updateStartVisibility();
       };
 
       guideInput.addEventListener("change", () => updateFileLabel(guideInput, guideName));
       studentInput.addEventListener("change", () => updateFileLabel(studentInput, studentName));
+
+      if (newExamBtn && uploadStrip) {
+        newExamBtn.addEventListener("click", () => {
+          toggleNewExam();
+        });
+      }
+
+      if (submitFilesBtn) {
+        submitFilesBtn.addEventListener("click", () => {
+          gradeBtn?.click();
+        });
+      }
+
+      if (menuNewExamBtn) {
+        menuNewExamBtn.addEventListener("click", () => {
+          toggleNewExam();
+          toggleMenu(false);
+        });
+      }
+
+      if (menuToggleBtn) {
+        menuToggleBtn.addEventListener("click", () => {
+          toggleMenu();
+        });
+      }
+
+      if (menuOverlayEl) {
+        menuOverlayEl.addEventListener("click", () => {
+          toggleMenu(false);
+        });
+      }
+
+      if (devToggleBtn) {
+        devToggleBtn.addEventListener("click", () => {
+          setDevMode(!devMode);
+        });
+      }
 
       const readFile = (file) =>
         new Promise((resolve, reject) => {
@@ -893,12 +1564,468 @@
       const normalizeText = (value) => String(value ?? "").replace(/\s+/g, " ").trim();
       const rawText = (value) => (value === null || value === undefined ? "" : String(value));
 
+      let highlightCounter = 0;
+      const createHighlightId = () => `hl_${highlightCounter++}`;
+      let globalEditing = false;
+      let currentLang = "he";
+      let devMode = false;
+
+      const translations = {
+        en: {
+          dev_mode_on: "Dev mode: On",
+          dev_mode_off: "Dev mode: Off",
+          menu: "Menu",
+          load_json: "Load JSON",
+          dark_ui: "Dark UI",
+          light_ui: "Light UI",
+          language_toggle: "עברית",
+          new_exam: "New Exam",
+          start: "Start",
+          submit_files: "Submit",
+          edit_mode: "Edit mode",
+          done: "Done",
+          overall_feedback: "Overall feedback",
+          overall_feedback_placeholder: "General overview and feedback",
+          overall_grade: "Overall grade",
+          overall_hint: "Sum of final scores",
+          guide_title: "Guide",
+          guide_hint: "guide.txt (rubrics, questions, expectations)",
+          student_title: "Student answers",
+          student_hint: "student_answers.txt (raw responses)",
+          no_file_selected: "No file selected",
+          questions: "Questions",
+          raw_output: "Raw model output",
+          awaiting_output: "Awaiting output...",
+          modal_question: "Question",
+          close: "Close",
+          comments: "Comments",
+          marks: "Marks",
+          add_highlight: "Add highlight",
+          confirm_highlight: "Confirm",
+          select_text: "Select text from the answer.",
+          choose_effect: "Choose add/remove first.",
+          points: "Points",
+          add: "+ Add",
+          remove: "- Remove",
+          reason: "Reason",
+          suggested: "Suggested",
+          ai_score: "AI score",
+          final: "Final",
+          override: "Override",
+          previous: "Previous",
+          next: "Next",
+          exit_full_screen: "Exit Full Screen",
+          enter_full_screen: "Enter full screen",
+          expand: "Expand",
+          collapse: "Collapse",
+          no_feedback: "No feedback.",
+          no_marks: "No marks yet.",
+          no_grades: "No grades returned.",
+          choose_files: "Please choose both guide.txt and student_answers.txt.",
+          grading: "Grading in progress...",
+          non_json: "Received non-JSON output. Showing raw output only.",
+          raw_unavailable: "Raw output not available.",
+          error_prefix: "Error: {detail}",
+          general_error: "Something went wrong while grading.",
+          fullscreen_unavailable: "Fullscreen is not available in this browser.",
+          loading_json: "Loading JSON sample...",
+          invalid_json: "Invalid JSON format. Expected questions/answers/grades/comments.",
+          could_not_load: "Could not load the JSON file.",
+          loaded_sample: "Loaded sample: {name}",
+          note: "Note",
+          edit_highlight_prompt: "Edit highlight note",
+          selection_warning: "Select text from the answer first.",
+          points_gt_zero: "Points must be greater than zero.",
+          reason_required: "Reason is required.",
+          warning_exceeds_remaining: "Warning: +{points} exceeds remaining {needed}.",
+          warning_exceeds_current: "Warning: -{points} exceeds current {needed}.",
+          invalid_range: "Selected range is invalid.",
+          warning_negative: "Warning: points cannot be negative.",
+          edit_final_score: "Edit final score",
+          edit: "Edit",
+          question_short: "Q",
+        },
+        he: {
+          dev_mode_on: "מצב מפתח: פועל",
+          dev_mode_off: "מצב מפתח: כבוי",
+          menu: "תפריט",
+          load_json: "טעינת JSON",
+          dark_ui: "מצב כהה",
+          light_ui: "מצב בהיר",
+          language_toggle: "English",
+          new_exam: "מבחן חדש",
+          start: "התחל",
+          submit_files: "שלח",
+          edit_mode: "מצב עריכה",
+          done: "סיום",
+          overall_feedback: "משוב כללי",
+          overall_feedback_placeholder: "סקירה כללית ומשוב",
+          overall_grade: "ציון כללי",
+          overall_hint: "סכום ציוני הסיום",
+          guide_title: "הנחיות",
+          guide_hint: "guide.txt (מחוון, שאלות, ציפיות)",
+          student_title: "תשובות תלמידים",
+          student_hint: "student_answers.txt (תשובות גולמיות)",
+          no_file_selected: "לא נבחר קובץ",
+          questions: "שאלות",
+          raw_output: "פלט מודל גולמי",
+          awaiting_output: "ממתין לפלט...",
+          modal_question: "שאלה",
+          close: "סגור",
+          comments: "הערות",
+          marks: "הדגשות",
+          add_highlight: "הוספת הדגשה",
+          confirm_highlight: "אישור",
+          select_text: "בחר טקסט מהתשובה.",
+          choose_effect: "בחר הוספה או הורדה תחילה.",
+          points: "נקודות",
+          add: "+ הוספה",
+          remove: "- הורדה",
+          reason: "סיבה",
+          suggested: "מוצע",
+          ai_score: "ציון AI",
+          final: "סופי",
+          override: "שינוי",
+          previous: "הקודם",
+          next: "הבא",
+          exit_full_screen: "יציאה ממסך מלא",
+          enter_full_screen: "מסך מלא",
+          expand: "הרחבה",
+          collapse: "צמצום",
+          no_feedback: "אין משוב.",
+          no_marks: "אין סימונים עדיין.",
+          no_grades: "לא הוחזרו ציונים.",
+          choose_files: "אנא בחר גם guide.txt וגם student_answers.txt.",
+          grading: "מתבצעת בדיקה...",
+          non_json: "התקבל פלט שאינו JSON. מוצג פלט גולמי בלבד.",
+          raw_unavailable: "פלט גולמי לא זמין.",
+          error_prefix: "שגיאה: {detail}",
+          general_error: "משהו השתבש בעת הבדיקה.",
+          fullscreen_unavailable: "מסך מלא אינו זמין בדפדפן זה.",
+          loading_json: "טוען דוגמת JSON...",
+          invalid_json: "פורמט JSON לא תקין. מצופה questions/answers/grades/comments.",
+          could_not_load: "לא ניתן לטעון את קובץ ה-JSON.",
+          loaded_sample: "נטענה דוגמה: {name}",
+          note: "הערה",
+          edit_highlight_prompt: "עריכת הערת סימון",
+          selection_warning: "בחר טקסט מהתשובה קודם.",
+          points_gt_zero: "הנקודות חייבות להיות גדולות מאפס.",
+          reason_required: "נדרשת סיבה.",
+          warning_exceeds_remaining: "אזהרה: +{points} חורג מהנותר {needed}.",
+          warning_exceeds_current: "אזהרה: -{points} חורג מהציון הנוכחי {needed}.",
+          invalid_range: "הטווח שנבחר אינו תקין.",
+          warning_negative: "אזהרה: נקודות לא יכולות להיות שליליות.",
+          edit_final_score: "עריכת ציון סופי",
+          edit: "עריכה",
+          question_short: "ש",
+        },
+      };
+
+      const t = (key, params = {}) => {
+        const bundle = translations[currentLang] || translations.en;
+        const template = bundle[key] ?? translations.en[key] ?? key;
+        return template.replace(/\{(\w+)\}/g, (_, token) =>
+          params[token] === undefined ? `{${token}}` : String(params[token])
+        );
+      };
+
+      const updateThemeToggleLabel = () => {
+        if (!themeToggleBtn) {
+          return;
+        }
+        const isDark = document.body.dataset.theme === "dark";
+        themeToggleBtn.textContent = isDark ? t("light_ui") : t("dark_ui");
+      };
+
+      const updateLangToggleLabel = () => {
+        if (!langToggleBtn) {
+          return;
+        }
+        langToggleBtn.textContent = t("language_toggle");
+      };
+
+      const updateDevToggleLabel = () => {
+        if (!devToggleBtn) {
+          return;
+        }
+        devToggleBtn.setAttribute("aria-pressed", devMode ? "true" : "false");
+        const label = devToggleBtn.querySelector("[data-role='dev-toggle-label']");
+        if (label) {
+          label.textContent = devMode ? t("dev_mode_on") : t("dev_mode_off");
+        }
+      };
+
+      const setDevMode = (enabled) => {
+        devMode = Boolean(enabled);
+        if (devMode) {
+          document.body.dataset.dev = "true";
+        } else {
+          delete document.body.dataset.dev;
+        }
+        window.localStorage?.setItem("grady-dev", devMode ? "true" : "false");
+        updateDevToggleLabel();
+      };
+
+      const applyStaticTranslations = () => {
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const key = el.dataset.i18n;
+          if (key) {
+            if (
+              rawOutputEl &&
+              el === rawOutputEl &&
+              rawOutputEl.textContent.trim() &&
+              rawOutputEl.textContent.trim() !== translations.en.awaiting_output &&
+              rawOutputEl.textContent.trim() !== translations.he.awaiting_output
+            ) {
+              return;
+            }
+            el.textContent = t(key);
+          }
+        });
+        if (modalTitleEl) {
+          const modalKey = modalEl?.dataset?.questionKey;
+          modalTitleEl.textContent = modalKey
+            ? `${t("modal_question")} ${modalKey}`
+            : t("modal_question");
+        }
+        document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+          const key = el.dataset.i18nPlaceholder;
+          if (key && "placeholder" in el) {
+            el.placeholder = t(key);
+          }
+        });
+        if (gradeBtn) {
+          gradeBtn.textContent = t("start");
+        }
+        updateFileLabel(guideInput, guideName);
+        updateFileLabel(studentInput, studentName);
+        updateThemeToggleLabel();
+        updateLangToggleLabel();
+        updateGlobalEditButton(globalEditing);
+        updateDevToggleLabel();
+        if (menuToggleBtn) {
+          menuToggleBtn.setAttribute("aria-label", t("menu"));
+        }
+        translateStatusMessage();
+        applyRowTranslations();
+      };
+
+      const translateStatusMessage = () => {
+        if (!statusEl) {
+          return;
+        }
+        const current = statusEl.textContent.trim();
+        if (!current) {
+          return;
+        }
+        const keys = [
+          "choose_files",
+          "grading",
+          "non_json",
+          "raw_unavailable",
+          "general_error",
+          "loading_json",
+          "invalid_json",
+          "could_not_load",
+          "no_grades",
+          "fullscreen_unavailable",
+        ];
+        for (const key of keys) {
+          if (current === translations.en[key] || current === translations.he[key]) {
+            statusEl.textContent = t(key);
+            return;
+          }
+        }
+        const errorPrefixEn = translations.en.error_prefix.split("{detail}")[0];
+        const errorPrefixHe = translations.he.error_prefix.split("{detail}")[0];
+        if (current.startsWith(errorPrefixEn)) {
+          const detail = current.slice(errorPrefixEn.length);
+          statusEl.textContent = t("error_prefix", { detail });
+          return;
+        }
+        if (current.startsWith(errorPrefixHe)) {
+          const detail = current.slice(errorPrefixHe.length);
+          statusEl.textContent = t("error_prefix", { detail });
+          return;
+        }
+        const loadedPrefixEn = translations.en.loaded_sample.split("{name}")[0];
+        const loadedPrefixHe = translations.he.loaded_sample.split("{name}")[0];
+        if (current.startsWith(loadedPrefixEn)) {
+          const name = current.slice(loadedPrefixEn.length);
+          statusEl.textContent = t("loaded_sample", { name });
+          return;
+        }
+        if (current.startsWith(loadedPrefixHe)) {
+          const name = current.slice(loadedPrefixHe.length);
+          statusEl.textContent = t("loaded_sample", { name });
+        }
+      };
+
+      const setLanguage = (lang) => {
+        currentLang = lang === "en" ? "en" : "he";
+        document.documentElement.lang = currentLang;
+        document.documentElement.dir = currentLang === "he" ? "rtl" : "ltr";
+        document.body.dataset.lang = currentLang;
+        window.localStorage?.setItem("grady-lang", currentLang);
+        applyStaticTranslations();
+      };
+
+      const setOverallVisibility = (visible) => {
+        if (overallPanelEl) {
+          overallPanelEl.classList.toggle("is-hidden", !visible);
+        }
+        if (overallGradeEl) {
+          overallGradeEl.classList.toggle("is-hidden", !visible);
+        }
+      };
+
+      const updateStartVisibility = () => {
+        if (!gradeBtn) {
+          return;
+        }
+        const hasGuide = guideInput?.files?.length;
+        const hasStudent = studentInput?.files?.length;
+        const ready = Boolean(hasGuide && hasStudent);
+        gradeBtn.classList.toggle("is-hidden", !ready);
+        gradeBtn.textContent = t("start");
+        if (submitFilesBtn) {
+          submitFilesBtn.disabled = !ready;
+        }
+      };
+
+      const toggleNewExam = () => {
+        if (!uploadStrip) {
+          return;
+        }
+        uploadStrip.classList.toggle("is-hidden");
+        updateStartVisibility();
+        if (submitFilesBtn) {
+          submitFilesBtn.disabled = true;
+        }
+        setOverallVisibility(false);
+        setGlobalEditVisibility(false);
+        if (overallFeedbackEl) {
+          overallFeedbackEl.value = "";
+        }
+      };
+
+      const toggleMenu = (forceOpen = null) => {
+        if (!sideMenuEl || !menuOverlayEl) {
+          return;
+        }
+        const shouldOpen =
+          forceOpen !== null ? forceOpen : !sideMenuEl.classList.contains("is-open");
+        sideMenuEl.classList.toggle("is-open", shouldOpen);
+        menuOverlayEl.classList.toggle("is-open", shouldOpen);
+        sideMenuEl.setAttribute("aria-hidden", shouldOpen ? "false" : "true");
+        menuOverlayEl.setAttribute("aria-hidden", shouldOpen ? "false" : "true");
+      };
+
+      const setSelectionPreview = (row, info) => {
+        if (!row) {
+          return;
+        }
+        const preview = row.querySelector(".selection-preview");
+        const popover = row.querySelector(".highlight-controls");
+        if (!info) {
+          if (preview) {
+            preview.textContent = t("select_text");
+          }
+          if (popover) {
+            popover.classList.remove("is-side");
+            popover.style.top = "";
+            popover.style.left = "";
+          }
+          row.classList.remove("has-selection");
+          delete row.dataset.selectionStart;
+          delete row.dataset.selectionEnd;
+          delete row.dataset.selectionText;
+          return;
+        }
+        const rawSelection = String(info.text || "");
+        const text = rawSelection.trim();
+        if (preview) {
+          preview.textContent = text || t("select_text");
+        }
+        row.classList.add("has-selection");
+        row.dataset.selectionStart = String(info.start);
+        row.dataset.selectionEnd = String(info.end);
+        row.dataset.selectionText = rawSelection;
+        updateHighlightEffectButtons(row);
+      };
+
+      const positionHighlightPopover = (row, range) => {
+        if (!row || !range) {
+          return;
+        }
+        const popover = row.querySelector(".highlight-controls");
+        if (!popover) {
+          return;
+        }
+        const rects = range.getClientRects();
+        const rect = rects.length ? rects[rects.length - 1] : range.getBoundingClientRect();
+        if (!rect || (!rect.width && !rect.height)) {
+          popover.classList.add("is-side");
+          return;
+        }
+        popover.classList.remove("is-side");
+        const popRect = popover.getBoundingClientRect();
+        const padding = 12;
+        const isRtl = getComputedStyle(document.body).direction === "rtl";
+        let left = isRtl ? rect.right - popRect.width : rect.left;
+        let top = rect.top - popRect.height - 8;
+        if (top < padding) {
+          top = rect.bottom + 8;
+        }
+        if (left < padding) {
+          left = padding;
+        }
+        if (left + popRect.width > window.innerWidth - padding) {
+          left = window.innerWidth - popRect.width - padding;
+        }
+        popover.style.top = `${top}px`;
+        popover.style.left = `${left}px`;
+      };
+
+      const applyTheme = (theme) => {
+        if (!themeToggleBtn) {
+          return;
+        }
+        if (theme === "dark") {
+          document.body.dataset.theme = "dark";
+        } else {
+          delete document.body.dataset.theme;
+        }
+        updateThemeToggleLabel();
+      };
+
+      if (themeToggleBtn) {
+        const storedTheme = window.localStorage?.getItem("grady-theme");
+        applyTheme(storedTheme === "dark" ? "dark" : "light");
+        themeToggleBtn.addEventListener("click", () => {
+          const nextTheme = document.body.dataset.theme === "dark" ? "light" : "dark";
+          applyTheme(nextTheme);
+          window.localStorage?.setItem("grady-theme", nextTheme);
+        });
+      }
+
       const formatNumber = (value) => {
         if (!Number.isFinite(value)) {
-          return "—";
+          return "--";
         }
         const rounded = Math.round(value * 10) / 10;
         return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+      };
+
+      const buildHighlightTooltipText = (effect, points, reason) => {
+        const normalizedReason = normalizeText(reason);
+        const pointsValue = Number.isFinite(points) ? formatNumber(Math.abs(points)) : "";
+        const prefix = pointsValue
+          ? `${effect === "add" ? "+" : "-"}${pointsValue}`
+          : effect === "add"
+            ? "+"
+            : "-";
+        return `${prefix} ${normalizedReason}`.trim();
       };
 
       const parseScorePair = (entry) => {
@@ -940,15 +2067,270 @@
               return null;
             }
             return {
+              id: highlight?.id || createHighlightId(),
               start,
               end,
               effect: normalizedEffect,
               points: Number(highlight?.points ?? 0),
               reason: normalizeText(highlight?.reason || ""),
+              active: highlight?.active !== false,
             };
           })
           .filter(Boolean)
           .sort((a, b) => a.start - b.start);
+      };
+
+      const getHighlightPoints = (span) => {
+        const points = Number(span.dataset.points);
+        return Number.isFinite(points) ? Math.abs(points) : 0;
+      };
+
+      const updateHighlightTooltip = (span) => {
+        const tooltip = span.querySelector(".highlight-tooltip");
+        if (!tooltip) {
+          return;
+        }
+        const effect = span.dataset.effect === "deduct" ? "deduct" : "add";
+        const points = getHighlightPoints(span);
+        const reason = span.dataset.reason || "";
+        tooltip.textContent = buildHighlightTooltipText(effect, points, reason);
+      };
+
+      const getSelectionOffsets = (container) => {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) {
+          return null;
+        }
+        const range = selection.getRangeAt(0);
+        if (!container.contains(range.startContainer) || !container.contains(range.endContainer)) {
+          return null;
+        }
+        const selectionText = range.toString();
+        const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+        let offset = 0;
+        let startOffset = null;
+        let endOffset = null;
+        let node = null;
+        while ((node = walker.nextNode())) {
+          const parentEl = node.parentElement;
+          if (parentEl) {
+            const ignored = parentEl.closest(".answer-toggle, .highlight-tooltip");
+            if (ignored) {
+              continue;
+            }
+          }
+          const length = node.textContent ? node.textContent.length : 0;
+          if (node === range.startContainer) {
+            startOffset = offset + range.startOffset;
+          }
+          if (node === range.endContainer) {
+            endOffset = offset + range.endOffset;
+          }
+          offset += length;
+        }
+        if (startOffset === null || endOffset === null) {
+          return null;
+        }
+        if (startOffset === endOffset) {
+          return null;
+        }
+        const start = Math.min(startOffset, endOffset);
+        const end = Math.max(startOffset, endOffset);
+        return { start, end, text: selectionText };
+      };
+
+      const setHighlightWarning = (row, message) => {
+        const warning = row.querySelector("[data-role='highlight-warning']");
+        if (!warning) {
+          return;
+        }
+        warning.textContent = message || "";
+      };
+
+      const updateHighlightEffectButtons = (row) => {
+        if (!row) {
+          return;
+        }
+        const effect = row.dataset.highlightEffect || "";
+        row.querySelectorAll("[data-action='select-highlight-effect']").forEach((btn) => {
+          const selected = effect && btn.dataset.effect === effect;
+          btn.classList.toggle("is-selected", selected);
+        });
+      };
+
+      const setHighlightEffect = (row, effect) => {
+        if (!row) {
+          return;
+        }
+        const next =
+          effect === "deduct" || effect === "remove"
+            ? "deduct"
+            : effect === "add"
+              ? "add"
+              : "";
+        if (next) {
+          row.dataset.highlightEffect = next;
+        } else {
+          delete row.dataset.highlightEffect;
+        }
+        updateHighlightEffectButtons(row);
+      };
+
+      const confirmHighlight = (row) => {
+        if (!row) {
+          return;
+        }
+        const effect = row.dataset.highlightEffect;
+        if (!effect) {
+          setHighlightWarning(row, t("choose_effect"));
+          return;
+        }
+        const start = Number(row.dataset.selectionStart);
+        const end = Number(row.dataset.selectionEnd);
+        const selectionText = String(row.dataset.selectionText || "").trim();
+        if (!selectionText || !Number.isFinite(start) || !Number.isFinite(end) || start >= end) {
+          setHighlightWarning(row, t("selection_warning"));
+          return;
+        }
+        const pointsInput = row.querySelector(".points-input");
+        const reasonInput = row.querySelector(".reason-input");
+        const pointsValue = pointsInput ? Number(pointsInput.value) : NaN;
+        const reason = normalizeText(reasonInput ? reasonInput.value : "");
+        if (!Number.isFinite(pointsValue) || pointsValue <= 0) {
+          setHighlightWarning(row, t("points_gt_zero"));
+          return;
+        }
+        if (!reason) {
+          setHighlightWarning(row, t("reason_required"));
+          return;
+        }
+
+        const input = row.querySelector(".final-input");
+        const maxValue = input ? Number(input.max) : NaN;
+        const currentValue = input ? Number(input.value) : NaN;
+        const current = Number.isFinite(currentValue) ? currentValue : 0;
+        const maxScore = Number.isFinite(maxValue) ? maxValue : current;
+        const needed = effect === "add" ? Math.max(0, maxScore - current) : Math.max(0, current);
+        if (pointsValue > needed) {
+          setHighlightWarning(
+            row,
+            effect === "add"
+              ? t("warning_exceeds_remaining", {
+                  points: formatNumber(pointsValue),
+                  needed: formatNumber(needed),
+                })
+              : t("warning_exceeds_current", {
+                  points: formatNumber(pointsValue),
+                  needed: formatNumber(needed),
+                })
+          );
+        } else {
+          setHighlightWarning(row, "");
+        }
+
+        const answerText = row.dataset.answerText || "";
+        if (end > answerText.length) {
+          setHighlightWarning(row, t("invalid_range"));
+          return;
+        }
+        const highlight = {
+          id: createHighlightId(),
+          start,
+          end,
+          effect,
+          points: pointsValue,
+          reason,
+          active: true,
+        };
+        row._highlights = row._highlights || [];
+        row._highlights.push(highlight);
+        updateRowHighlights(row);
+        adjustFinalScore(row, effect === "add" ? pointsValue : -pointsValue);
+
+        if (pointsInput) {
+          pointsInput.value = "";
+        }
+        if (reasonInput) {
+          reasonInput.value = "";
+        }
+        setSelectionPreview(row, null);
+      };
+
+      const clampScore = (value, min, max) => {
+        let next = value;
+        if (Number.isFinite(min)) {
+          next = Math.max(min, next);
+        }
+        if (Number.isFinite(max)) {
+          next = Math.min(max, next);
+        }
+        return next;
+      };
+
+      const adjustFinalScore = (row, delta) => {
+        if (!row || !Number.isFinite(delta) || delta === 0) {
+          return;
+        }
+        const input = row.querySelector(".final-input");
+        if (!input) {
+          return;
+        }
+        const current = Number(input.value);
+        if (!Number.isFinite(current)) {
+          return;
+        }
+        const maxValue = Number(input.max);
+        const next = clampScore(current + delta, 0, Number.isFinite(maxValue) ? maxValue : null);
+        input.value = formatNumber(next);
+        setOverrideState(row, input);
+        updateScoreDiff(row);
+        updateTotalGrade();
+        if (globalEditing) {
+          setGlobalEditing(true);
+        } else {
+          syncGlobalEditingState();
+        }
+      };
+
+      const toggleHighlight = (span) => {
+        const row = span.closest(".ledger-row");
+        if (!row || !row._highlights) {
+          return;
+        }
+        const highlightId = span.dataset.id;
+        const highlight = row._highlights.find((item) => item.id === highlightId);
+        if (!highlight) {
+          return;
+        }
+        const isActive = highlight.active !== false;
+        highlight.active = !isActive;
+
+        const effect = highlight.effect === "deduct" ? "deduct" : "add";
+        const points = Number.isFinite(highlight.points) ? Math.abs(highlight.points) : 0;
+        if (points > 0) {
+          const effectSign = effect === "add" ? 1 : -1;
+          const delta = isActive ? -effectSign * points : effectSign * points;
+          adjustFinalScore(row, delta);
+        }
+
+        updateRowHighlights(row);
+      };
+
+      const editHighlightReason = (span) => {
+        const row = span.closest(".ledger-row");
+        const highlightId = span.dataset.id;
+        const highlight = row?._highlights?.find((item) => item.id === highlightId);
+        const current = highlight?.reason || span.dataset.reason || "";
+        const updated = window.prompt(t("edit_highlight_prompt"), current);
+        if (updated === null) {
+          return;
+        }
+        const normalized = normalizeText(updated);
+        span.dataset.reason = normalized;
+        if (highlight) {
+          highlight.reason = normalized;
+        }
+        updateRowHighlights(row);
       };
 
       const renderHighlightedAnswer = (container, text, highlights) => {
@@ -972,17 +2354,24 @@
           }
           if (highlight.start >= cursor) {
             const span = document.createElement("span");
-            span.className = highlight.effect === "add" ? "highlight-add" : "highlight-deduct";
+            const effect = highlight.effect === "add" ? "add" : "deduct";
+            const points = Number.isFinite(highlight.points) ? Math.abs(highlight.points) : 0;
+            const reason = highlight.reason || "";
+            span.className = effect === "add" ? "highlight-add" : "highlight-deduct";
             span.textContent = text.slice(highlight.start, highlight.end);
-            const pointsValue = Number.isFinite(highlight.points)
-              ? formatNumber(Math.abs(highlight.points))
-              : "";
-            const prefix = pointsValue
-              ? `${highlight.effect === "add" ? "+" : "-"}${pointsValue}`
-              : highlight.effect === "add"
-                ? "+"
-                : "-";
-            span.setAttribute("data-tooltip", `${prefix} ${highlight.reason}`.trim());
+            span.dataset.effect = effect;
+            span.dataset.points = points ? String(points) : "";
+            span.dataset.reason = reason;
+            span.dataset.active = highlight.active ? "true" : "false";
+            span.dataset.id = highlight.id;
+            if (!highlight.active) {
+              span.classList.add("highlight-muted");
+            }
+            const tooltip = document.createElement("span");
+            tooltip.className = "highlight-tooltip";
+            tooltip.dataset.action = "edit-highlight";
+            tooltip.textContent = buildHighlightTooltipText(effect, points, reason);
+            span.appendChild(tooltip);
             container.appendChild(span);
           }
           cursor = highlight.end;
@@ -992,16 +2381,368 @@
         }
       };
 
+      const renderHighlightList = (container, highlights, text) => {
+        container.innerHTML = "";
+        const normalized = normalizeHighlights(highlights, text);
+        if (!normalized.length) {
+          const empty = document.createElement("div");
+          empty.className = "mark-empty";
+          empty.textContent = t("no_marks");
+          container.appendChild(empty);
+          return;
+        }
+        normalized.forEach((highlight) => {
+          const item = document.createElement("div");
+          item.className = `mark-item ${highlight.effect === "add" ? "add" : "deduct"}`;
+          item.dataset.id = highlight.id;
+          if (!highlight.active) {
+            item.classList.add("is-inactive");
+          }
+
+          const icon = document.createElement("span");
+          icon.className = "mark-icon";
+          icon.textContent = highlight.effect === "add" ? "+" : "-";
+
+          const textEl = document.createElement("span");
+          textEl.className = "mark-text";
+          textEl.textContent = normalizeText(highlight.reason || t("note"));
+
+          const pointsInput = document.createElement("input");
+          pointsInput.type = "number";
+          pointsInput.min = "0";
+          pointsInput.step = "0.5";
+          pointsInput.className = "mark-points-input";
+          pointsInput.dataset.id = highlight.id;
+          pointsInput.dataset.effect = highlight.effect;
+          pointsInput.disabled = true;
+          const points = Number.isFinite(highlight.points) ? Math.abs(highlight.points) : 0;
+          pointsInput.value = points ? String(points) : "";
+
+          const removeBtn = document.createElement("button");
+          removeBtn.type = "button";
+          removeBtn.className = "mark-remove";
+          removeBtn.dataset.action = "remove-highlight";
+          removeBtn.dataset.id = highlight.id;
+          removeBtn.textContent = "×";
+
+          item.appendChild(icon);
+          item.appendChild(textEl);
+          item.appendChild(pointsInput);
+          item.appendChild(removeBtn);
+          container.appendChild(item);
+        });
+      };
+
+      const updateRowHighlights = (row) => {
+        if (!row) {
+          return;
+        }
+        const answerText = row.dataset.answerText || "";
+        const answerBody = row.querySelector(".answer-text");
+        if (answerBody) {
+          renderHighlightedAnswer(answerBody, answerText, row._highlights || []);
+        }
+        const markList = row.querySelector(".mark-list");
+        if (markList) {
+          renderHighlightList(markList, row._highlights || [], answerText);
+        }
+      };
+
+      const getFullscreenElement = () =>
+        document.fullscreenElement || document.webkitFullscreenElement || null;
+
+      const requestFullscreen = (element) => {
+        if (element.requestFullscreen) {
+          return element.requestFullscreen();
+        }
+        if (element.webkitRequestFullscreen) {
+          return element.webkitRequestFullscreen();
+        }
+        return Promise.reject(new Error("Fullscreen not supported"));
+      };
+
+      const exitFullscreen = () => {
+        if (document.exitFullscreen) {
+          return document.exitFullscreen();
+        }
+        if (document.webkitExitFullscreen) {
+          return document.webkitExitFullscreen();
+        }
+        return Promise.reject(new Error("Fullscreen not supported"));
+      };
+
+      const setFullscreenState = (row, isFullscreen) => {
+        const wasFullscreen = row.classList.contains("is-fullscreen");
+        row.classList.toggle("is-fullscreen", isFullscreen);
+        const label = isFullscreen ? t("exit_full_screen") : t("enter_full_screen");
+        row.querySelectorAll("[data-action='toggle-fullscreen']").forEach((button) => {
+          button.setAttribute("aria-label", label);
+          button.setAttribute("title", label);
+          if (button.classList.contains("exit-fullscreen-btn")) {
+            button.textContent = t("exit_full_screen");
+          }
+        });
+        if (isFullscreen) {
+          updateFullscreenNav(row);
+        }
+        if (!isFullscreen && wasFullscreen) {
+          const wasExpanded = row.dataset.wasExpanded === "true";
+          if (!wasExpanded) {
+            row.classList.remove("is-expanded");
+            const toggle = row.querySelector("[data-action='toggle-answer']");
+            if (toggle) {
+              toggle.textContent = t("expand");
+            }
+          }
+          delete row.dataset.wasExpanded;
+        }
+      };
+
+      const getRows = () => Array.from(resultsEl.querySelectorAll(".ledger-row"));
+
+      const applyRowTranslations = (targetRow = null) => {
+        const rows = targetRow ? [targetRow] : getRows();
+        rows.forEach((row) => {
+          const key = row.dataset.key || "";
+          const qButton = row.querySelector("[data-action='show-question']");
+          if (qButton) {
+            qButton.textContent = `${t("question_short")}${key}`;
+          }
+
+          const toggle = row.querySelector("[data-action='toggle-answer']");
+          if (toggle) {
+            toggle.textContent = row.classList.contains("is-expanded")
+              ? t("collapse")
+              : t("expand");
+          }
+
+          const fullscreenLabel =
+            getFullscreenElement() === row ? t("exit_full_screen") : t("enter_full_screen");
+          row.querySelectorAll("[data-action='toggle-fullscreen']").forEach((button) => {
+            button.setAttribute("aria-label", fullscreenLabel);
+            button.setAttribute("title", fullscreenLabel);
+            if (button.classList.contains("exit-fullscreen-btn")) {
+              button.textContent = t("exit_full_screen");
+            }
+          });
+
+          row.querySelectorAll("[data-action='prev-question']").forEach((btn) => {
+            btn.textContent = t("previous");
+          });
+          row.querySelectorAll("[data-action='next-question']").forEach((btn) => {
+            btn.textContent = t("next");
+          });
+
+          const feedbackLabel = row.querySelector(".feedback-label");
+          if (feedbackLabel) {
+            feedbackLabel.textContent = t("comments");
+          }
+          const feedbackEditBtn = row.querySelector("[data-action='edit-feedback']");
+          if (feedbackEditBtn) {
+            if (row.classList.contains("is-feedback-editing")) {
+              feedbackEditBtn.textContent = t("done");
+              feedbackEditBtn.setAttribute("aria-label", t("done"));
+              feedbackEditBtn.setAttribute("title", t("done"));
+            } else {
+              feedbackEditBtn.setAttribute("aria-label", t("edit"));
+              feedbackEditBtn.setAttribute("title", t("edit"));
+            }
+          }
+          const marksLabel = row.querySelector("[data-role='marks-label']");
+          if (marksLabel) {
+            marksLabel.textContent = t("marks");
+          }
+          const addLabel = row.querySelector("[data-role='add-highlight-label']");
+          if (addLabel) {
+            addLabel.textContent = t("add_highlight");
+          }
+
+          const selectionPreview = row.querySelector(".selection-preview");
+          if (selectionPreview && !row.classList.contains("has-selection")) {
+            selectionPreview.textContent = t("select_text");
+          }
+
+          const pointsInput = row.querySelector(".points-input");
+          if (pointsInput) {
+            pointsInput.placeholder = t("points");
+          }
+
+          const reasonInput = row.querySelector(".reason-input");
+          if (reasonInput) {
+            reasonInput.placeholder = t("reason");
+          }
+
+          const addBtn = row.querySelector(".mark-btn.add");
+          if (addBtn) {
+            addBtn.textContent = t("add");
+          }
+          const deductBtn = row.querySelector(".mark-btn.deduct");
+          if (deductBtn) {
+            deductBtn.textContent = t("remove");
+          }
+          const confirmBtn = row.querySelector("[data-action='confirm-highlight']");
+          if (confirmBtn) {
+            confirmBtn.textContent = t("confirm_highlight");
+          }
+          updateHighlightEffectButtons(row);
+
+          const suggestedLabel = row.querySelector(".score-block.is-suggested .score-label");
+          if (suggestedLabel) {
+            suggestedLabel.textContent = t("suggested");
+          }
+          const aiHint = row.querySelector(".score-block.is-suggested .ai-hint");
+          if (aiHint) {
+            aiHint.textContent = t("ai_score");
+          }
+          const finalLabel = row.querySelector(".score-block.is-final .score-label");
+          if (finalLabel) {
+            finalLabel.textContent = t("final");
+          }
+          const overrideFlag = row.querySelector(".override-flag");
+          if (overrideFlag) {
+            overrideFlag.textContent = t("override");
+          }
+
+          const finalEditBtn = row.querySelector("[data-action='toggle-final-edit']");
+          const finalInput = row.querySelector(".final-input");
+          if (finalEditBtn) {
+            if (finalInput && finalInput.disabled === false) {
+              finalEditBtn.textContent = t("done");
+              finalEditBtn.setAttribute("aria-label", t("done"));
+              finalEditBtn.setAttribute("title", t("done"));
+            } else {
+              finalEditBtn.setAttribute("aria-label", t("edit_final_score"));
+              finalEditBtn.setAttribute("title", t("edit_final_score"));
+            }
+          }
+
+          const feedbackDisplay = row.querySelector(".feedback-display");
+          if (feedbackDisplay) {
+            const trimmed = feedbackDisplay.textContent.trim();
+            if (
+              !trimmed ||
+              trimmed === translations.en.no_feedback ||
+              trimmed === translations.he.no_feedback
+            ) {
+              feedbackDisplay.textContent = t("no_feedback");
+            }
+          }
+
+          const feedbackInput = row.querySelector(".feedback-input");
+          if (feedbackInput) {
+            const trimmed = feedbackInput.value.trim();
+            if (
+              !trimmed ||
+              trimmed === translations.en.no_feedback ||
+              trimmed === translations.he.no_feedback
+            ) {
+              feedbackInput.value = t("no_feedback");
+            }
+          }
+
+          const markEmpty = row.querySelector(".mark-empty");
+          if (markEmpty) {
+            markEmpty.textContent = t("no_marks");
+          }
+        });
+      };
+
+      const getAdjacentRow = (row, direction) => {
+        const rows = getRows();
+        const index = rows.indexOf(row);
+        if (index === -1) {
+          return null;
+        }
+        const nextIndex = direction === "prev" ? index - 1 : index + 1;
+        if (nextIndex < 0 || nextIndex >= rows.length) {
+          return null;
+        }
+        return rows[nextIndex];
+      };
+
+      const updateFullscreenNav = (row) => {
+        const prevButtons = row.querySelectorAll("[data-action='prev-question']");
+        const nextButtons = row.querySelectorAll("[data-action='next-question']");
+        if (!prevButtons.length && !nextButtons.length) {
+          return;
+        }
+        const rows = getRows();
+        const index = rows.indexOf(row);
+        const prevDisabled = index <= 0;
+        const nextDisabled = index === -1 || index >= rows.length - 1;
+        prevButtons.forEach((btn) => {
+          btn.disabled = prevDisabled;
+        });
+        nextButtons.forEach((btn) => {
+          btn.disabled = nextDisabled;
+        });
+      };
+
+      const prepareRowForFullscreen = (row) => {
+        row.dataset.wasExpanded = row.classList.contains("is-expanded") ? "true" : "false";
+        row.classList.add("is-expanded");
+          const toggle = row.querySelector("[data-action='toggle-answer']");
+          if (toggle) {
+            toggle.textContent = t("collapse");
+          }
+        updateFullscreenNav(row);
+      };
+
+      const goToAdjacentRow = async (row, direction) => {
+        if (!row) {
+          return;
+        }
+        const target = getAdjacentRow(row, direction);
+        if (!target) {
+          return;
+        }
+        try {
+          prepareRowForFullscreen(target);
+          await requestFullscreen(target);
+        } catch (error) {
+          try {
+            await exitFullscreen();
+            prepareRowForFullscreen(target);
+            await requestFullscreen(target);
+          } catch (innerError) {
+            statusEl.textContent = t("fullscreen_unavailable");
+          }
+        }
+      };
+
+      const syncFullscreenState = () => {
+        const fullscreenEl = getFullscreenElement();
+        document.querySelectorAll(".ledger-row").forEach((row) => {
+          setFullscreenState(row, row === fullscreenEl);
+        });
+      };
+
       const updateTotalGrade = () => {
         const inputs = resultsEl.querySelectorAll(".final-input");
         let total = 0;
+        let totalMax = 0;
         inputs.forEach((input) => {
           const value = Number(input.value);
           if (!Number.isNaN(value)) {
             total += value;
           }
+          const maxValue = Number(input.max);
+          if (Number.isFinite(maxValue)) {
+            totalMax += maxValue;
+          }
         });
-        totalGradeValueEl.textContent = inputs.length ? formatNumber(total) : "—";
+        if (!inputs.length) {
+          totalGradeValueEl.textContent = "--";
+          if (totalGradeMaxEl) {
+            totalGradeMaxEl.textContent = "/--";
+          }
+          return;
+        }
+        totalGradeValueEl.textContent = formatNumber(total);
+        if (totalGradeMaxEl) {
+          totalGradeMaxEl.textContent =
+            Number.isFinite(totalMax) && totalMax > 0 ? `/${formatNumber(totalMax)}` : "/--";
+        }
       };
 
       const setOverrideState = (row, input) => {
@@ -1012,8 +2753,138 @@
         row.classList.toggle("is-overridden", hasOverride);
       };
 
+      const updateScoreDiff = (row) => {
+        if (!row) {
+          return;
+        }
+        const diffEl = row.querySelector("[data-role='score-diff']");
+        const input = row.querySelector(".final-input");
+        if (!diffEl || !input) {
+          return;
+        }
+        const aiGrade = row.dataset.aiGrade ? Number(row.dataset.aiGrade) : null;
+        const current = Number(input.value);
+        if (!Number.isFinite(aiGrade) || !Number.isFinite(current)) {
+          diffEl.textContent = "--";
+          diffEl.classList.remove("positive", "negative", "neutral");
+          diffEl.classList.add("neutral");
+          return;
+        }
+        const delta = Math.round((current - aiGrade) * 10) / 10;
+        const sign = delta > 0 ? "+" : delta < 0 ? "-" : "";
+        diffEl.textContent = `${sign}${formatNumber(Math.abs(delta))}`;
+        diffEl.classList.remove("positive", "negative", "neutral");
+        if (delta > 0) {
+          diffEl.classList.add("positive");
+        } else if (delta < 0) {
+          diffEl.classList.add("negative");
+        } else {
+          diffEl.classList.add("neutral");
+        }
+      };
+
+      const setFinalEditing = (row, editing, options = {}) => {
+        if (!row) {
+          return;
+        }
+        const { focus = true } = options;
+        const input = row.querySelector(".final-input");
+        const button = row.querySelector("[data-action='toggle-final-edit']");
+        if (!input || !button) {
+          return;
+        }
+        input.disabled = !editing;
+        if (editing) {
+          if (focus) {
+            input.focus();
+          }
+          button.setAttribute("aria-label", t("done"));
+          button.setAttribute("title", t("done"));
+          button.textContent = t("done");
+        } else {
+          button.setAttribute("aria-label", t("edit_final_score"));
+          button.setAttribute("title", t("edit_final_score"));
+          button.innerHTML =
+            '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+            '<path fill="currentColor" d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zm17.71-10.04a1.003 1.003 0 0 0 0-1.42l-2.5-2.5a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.99-1.66z"/>' +
+            "</svg>";
+        }
+      };
+
+      const updateGlobalEditButton = (enabled) => {
+        if (!globalEditBtn) {
+          return;
+        }
+        globalEditBtn.classList.toggle("is-active", enabled);
+        globalEditBtn.setAttribute("aria-pressed", enabled ? "true" : "false");
+        const label = globalEditBtn.querySelector("[data-role='global-edit-label']");
+        if (label) {
+          label.textContent = enabled ? t("done") : t("edit_mode");
+        }
+      };
+
+      const setGlobalEditVisibility = (visible) => {
+        if (!globalEditBtn) {
+          return;
+        }
+        globalEditBtn.classList.toggle("is-hidden", !visible);
+      };
+
+      const setGlobalEditing = (enabled) => {
+        globalEditing = enabled;
+        updateGlobalEditButton(enabled);
+        const rows = getRows();
+        rows.forEach((row) => {
+          setFeedbackEditing(row, enabled, { focus: false });
+          setFinalEditing(row, enabled, { focus: false });
+        });
+      };
+
+      const syncGlobalEditingState = () => {
+        if (!globalEditBtn) {
+          return;
+        }
+        const rows = getRows();
+        if (!rows.length) {
+          globalEditing = false;
+          updateGlobalEditButton(false);
+          return;
+        }
+        const allEditing = rows.every((row) => {
+          const feedbackEditing = row.classList.contains("is-feedback-editing");
+          const finalInput = row.querySelector(".final-input");
+          return feedbackEditing && finalInput && finalInput.disabled === false;
+        });
+        if (allEditing !== globalEditing) {
+          globalEditing = allEditing;
+          updateGlobalEditButton(allEditing);
+        }
+      };
+
+      if (globalEditBtn) {
+        updateGlobalEditButton(false);
+        setGlobalEditVisibility(false);
+        globalEditBtn.addEventListener("click", () => {
+          setGlobalEditing(!globalEditing);
+        });
+      }
+
+      const storedDev = window.localStorage?.getItem("grady-dev");
+      setDevMode(storedDev === "true");
+
+      const storedLang = window.localStorage?.getItem("grady-lang");
+      setLanguage(storedLang === "en" ? "en" : "he");
+      updateStartVisibility();
+      if (langToggleBtn) {
+        langToggleBtn.addEventListener("click", () => {
+          setLanguage(currentLang === "he" ? "en" : "he");
+        });
+      }
+
       const renderResults = (data) => {
         resultsEl.innerHTML = "";
+        setOverallVisibility(false);
+        setGlobalEditVisibility(false);
 
         const grades = data?.grades || {};
         const comments = data?.comments || {};
@@ -1023,8 +2894,12 @@
 
         const keys = Object.keys(grades).sort((a, b) => Number(a) - Number(b));
         if (!keys.length) {
-          statusEl.textContent = "No grades returned.";
-          totalGradeValueEl.textContent = "—";
+          statusEl.textContent = t("no_grades");
+          totalGradeValueEl.textContent = "--";
+          if (totalGradeMaxEl) {
+            totalGradeMaxEl.textContent = "/--";
+          }
+          setOverallVisibility(true);
           return;
         }
 
@@ -1033,88 +2908,246 @@
           row.className = "ledger-row";
           row.dataset.key = key;
 
-          const questionText = normalizeText(questions[key] || `Question ${key}`);
+          const fallbackQuestion = `${t("modal_question")} ${key}`;
+          const questionText = normalizeText(questions[key] || fallbackQuestion);
           row.dataset.questionText = questionText;
 
-          const qCell = document.createElement("div");
-          qCell.className = "ledger-cell cell-q";
+          const answerText = rawText(answers[key]);
+          row.dataset.answerText = answerText;
+          row._highlights = normalizeHighlights(highlightsMap[key], answerText);
+
+          const leftColumn = document.createElement("div");
+          leftColumn.className = "row-left";
+
+          const header = document.createElement("div");
+          header.className = "row-header";
+          const headerLeft = document.createElement("div");
+          headerLeft.className = "row-head-left";
           const qButton = document.createElement("button");
           qButton.type = "button";
           qButton.className = "question-button";
           qButton.dataset.action = "show-question";
-          qButton.textContent = key;
-          qCell.appendChild(qButton);
+          qButton.textContent = `${t("question_short")}${key}`;
+          headerLeft.appendChild(qButton);
 
-          const answerCell = document.createElement("div");
-          answerCell.className = "ledger-cell cell-answer";
-          const answerText = rawText(answers[key]);
+          const questionTitle = document.createElement("div");
+          questionTitle.className = "question-title";
+          questionTitle.textContent = questionText || fallbackQuestion;
+          headerLeft.appendChild(questionTitle);
+
+          header.appendChild(headerLeft);
+          leftColumn.appendChild(header);
+
           const answerBody = document.createElement("div");
           answerBody.className = "answer-text";
-          renderHighlightedAnswer(answerBody, answerText, highlightsMap[key]);
-          answerCell.appendChild(answerBody);
+          renderHighlightedAnswer(answerBody, answerText, row._highlights);
+          leftColumn.appendChild(answerBody);
 
           if (answerText.length > 140) {
             const toggle = document.createElement("button");
             toggle.type = "button";
             toggle.className = "answer-toggle";
             toggle.dataset.action = "toggle-answer";
-            toggle.textContent = "Expand";
-            answerCell.appendChild(toggle);
+            toggle.textContent = t("expand");
+            answerBody.classList.add("has-toggle");
+            answerBody.appendChild(toggle);
           }
 
-          const aiCell = document.createElement("div");
-          aiCell.className = "ledger-cell cell-ai";
-          const aiScore = document.createElement("div");
-          aiScore.className = "ai-score";
+          const bottomActions = document.createElement("div");
+          bottomActions.className = "row-bottom-actions";
+
+          const fullscreenBtn = document.createElement("button");
+          fullscreenBtn.type = "button";
+          fullscreenBtn.className = "fullscreen-btn";
+          fullscreenBtn.dataset.action = "toggle-fullscreen";
+          fullscreenBtn.setAttribute("aria-label", t("enter_full_screen"));
+          fullscreenBtn.setAttribute("title", t("enter_full_screen"));
+          fullscreenBtn.innerHTML =
+            '<svg class="fullscreen-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+            '<path fill="currentColor" d="M7 3h4v2H9v2H7V3zm10 0v4h-2V5h-2V3h4zM7 21v-4h2v2h2v2H7zm10-4h2v4h-4v-2h2v-2z"/>' +
+            "</svg>";
+
+          const fullscreenNav = document.createElement("div");
+          fullscreenNav.className = "fullscreen-nav";
+          const prevBtn = document.createElement("button");
+          prevBtn.type = "button";
+          prevBtn.className = "nav-btn";
+          prevBtn.dataset.action = "prev-question";
+          prevBtn.textContent = t("previous");
+          const nextBtn = document.createElement("button");
+          nextBtn.type = "button";
+          nextBtn.className = "nav-btn";
+          nextBtn.dataset.action = "next-question";
+          nextBtn.textContent = t("next");
+          fullscreenNav.appendChild(prevBtn);
+          fullscreenNav.appendChild(nextBtn);
+
+          bottomActions.appendChild(fullscreenBtn);
+          bottomActions.appendChild(fullscreenNav);
+          leftColumn.appendChild(bottomActions);
+
           const { score, maxScore } = parseScorePair(grades[key]);
           const gradeText =
             score !== null && maxScore !== null
               ? `${formatNumber(score)}/${formatNumber(maxScore)}`
               : String(grades[key] ?? "");
-          aiScore.textContent = gradeText;
-          const aiHint = document.createElement("div");
-          aiHint.className = "ai-hint";
-          aiHint.textContent = "Suggested";
-          aiCell.appendChild(aiScore);
-          aiCell.appendChild(aiHint);
+
+          const rightColumn = document.createElement("div");
+          rightColumn.className = "row-right";
 
           const feedbackCell = document.createElement("div");
-          feedbackCell.className = "ledger-cell cell-feedback";
+          feedbackCell.className = "feedback-panel cell-feedback";
           const feedbackToolbar = document.createElement("div");
           feedbackToolbar.className = "feedback-toolbar";
           const feedbackLabel = document.createElement("span");
-          feedbackLabel.textContent = "Feedback";
+          feedbackLabel.className = "feedback-label";
+          feedbackLabel.textContent = t("comments");
           const feedbackEdit = document.createElement("button");
           feedbackEdit.type = "button";
           feedbackEdit.className = "feedback-edit";
           feedbackEdit.dataset.action = "edit-feedback";
-          feedbackEdit.textContent = "Edit";
+          feedbackEdit.setAttribute("aria-label", t("edit"));
+          feedbackEdit.setAttribute("title", t("edit"));
+          feedbackEdit.innerHTML =
+            '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="16" height="16">' +
+            '<path fill="currentColor" d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zm17.71-10.04a1.003 1.003 0 0 0 0-1.42l-2.5-2.5a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.99-1.66z"/>' +
+            "</svg>";
           feedbackToolbar.appendChild(feedbackLabel);
           feedbackToolbar.appendChild(feedbackEdit);
 
           const feedbackDisplay = document.createElement("div");
           feedbackDisplay.className = "feedback-display";
-          feedbackDisplay.textContent = normalizeText(comments[key]) || "No feedback.";
+          feedbackDisplay.textContent = normalizeText(comments[key]) || t("no_feedback");
 
           const feedbackInput = document.createElement("textarea");
           feedbackInput.className = "feedback-input";
-          feedbackInput.value = normalizeText(comments[key]) || "No feedback.";
+          feedbackInput.value = normalizeText(comments[key]) || t("no_feedback");
           feedbackInput.rows = 2;
 
           feedbackCell.appendChild(feedbackToolbar);
           feedbackCell.appendChild(feedbackDisplay);
           feedbackCell.appendChild(feedbackInput);
 
-          const finalCell = document.createElement("div");
-          finalCell.className = "ledger-cell cell-final";
+          const markLabel = document.createElement("div");
+          markLabel.className = "mark-label";
+          markLabel.dataset.role = "marks-label";
+          markLabel.textContent = t("marks");
+
+          const markList = document.createElement("div");
+          markList.className = "mark-list";
+          renderHighlightList(markList, row._highlights, answerText);
+
+          feedbackCell.appendChild(markLabel);
+          feedbackCell.appendChild(markList);
+
+          const controls = document.createElement("div");
+          controls.className = "highlight-controls";
+
+          const addLabel = document.createElement("div");
+          addLabel.className = "mark-label";
+          addLabel.dataset.role = "add-highlight-label";
+          addLabel.textContent = t("add_highlight");
+
+          const selectionPreview = document.createElement("div");
+          selectionPreview.className = "selection-preview";
+          selectionPreview.textContent = t("select_text");
+
+          const controlsRow = document.createElement("div");
+          controlsRow.className = "highlight-row";
+
+          const effectRow = document.createElement("div");
+          effectRow.className = "highlight-effect-row";
+
+          const pointsInput = document.createElement("input");
+          pointsInput.type = "number";
+          pointsInput.min = "0";
+          pointsInput.step = "0.5";
+          pointsInput.className = "points-input";
+          pointsInput.placeholder = t("points");
+
+          const addBtn = document.createElement("button");
+          addBtn.type = "button";
+          addBtn.className = "mark-btn add";
+          addBtn.dataset.action = "select-highlight-effect";
+          addBtn.dataset.effect = "add";
+          addBtn.textContent = t("add");
+
+          const deductBtn = document.createElement("button");
+          deductBtn.type = "button";
+          deductBtn.className = "mark-btn deduct";
+          deductBtn.dataset.action = "select-highlight-effect";
+          deductBtn.dataset.effect = "deduct";
+          deductBtn.textContent = t("remove");
+
+          const reasonInput = document.createElement("input");
+          reasonInput.type = "text";
+          reasonInput.className = "reason-input";
+          reasonInput.placeholder = t("reason");
+
+          const confirmBtn = document.createElement("button");
+          confirmBtn.type = "button";
+          confirmBtn.className = "mark-apply-btn";
+          confirmBtn.dataset.action = "confirm-highlight";
+          confirmBtn.textContent = t("confirm_highlight");
+
+          const warning = document.createElement("div");
+          warning.className = "highlight-warning";
+          warning.dataset.role = "highlight-warning";
+
+          effectRow.appendChild(addBtn);
+          effectRow.appendChild(deductBtn);
+          controlsRow.appendChild(pointsInput);
+
+          controls.appendChild(addLabel);
+          controls.appendChild(selectionPreview);
+          controls.appendChild(effectRow);
+          controls.appendChild(controlsRow);
+          controls.appendChild(reasonInput);
+          controls.appendChild(confirmBtn);
+          controls.appendChild(warning);
+
+          feedbackCell.appendChild(controls);
+
+          const scorePanel = document.createElement("div");
+          scorePanel.className = "score-panel";
+
+          const suggestedBlock = document.createElement("div");
+          suggestedBlock.className = "score-block is-suggested";
+          const suggestedLabel = document.createElement("div");
+          suggestedLabel.className = "score-label";
+          suggestedLabel.textContent = t("suggested");
+          const aiScore = document.createElement("div");
+          aiScore.className = "ai-score";
+          aiScore.textContent = gradeText;
+          const scoreLine = document.createElement("div");
+          scoreLine.className = "score-line";
+          const scoreDiff = document.createElement("div");
+          scoreDiff.className = "score-diff neutral";
+          scoreDiff.dataset.role = "score-diff";
+          scoreDiff.textContent = "0";
+          const aiHint = document.createElement("div");
+          aiHint.className = "ai-hint";
+          aiHint.textContent = t("ai_score");
+          suggestedBlock.appendChild(suggestedLabel);
+          scoreLine.appendChild(aiScore);
+          scoreLine.appendChild(scoreDiff);
+          suggestedBlock.appendChild(scoreLine);
+          suggestedBlock.appendChild(aiHint);
+
+          const finalBlock = document.createElement("div");
+          finalBlock.className = "score-block is-final";
+          const finalLabel = document.createElement("div");
+          finalLabel.className = "score-label";
+          finalLabel.textContent = t("final");
           const finalWrap = document.createElement("div");
-          finalWrap.className = "final-cell";
+          finalWrap.className = "final-line";
           const finalInput = document.createElement("input");
           finalInput.type = "number";
           finalInput.min = "0";
           finalInput.max = Number.isFinite(maxScore) ? String(maxScore) : "10";
           finalInput.step = "0.5";
           finalInput.className = "final-input";
+          finalInput.disabled = true;
           if (Number.isFinite(score)) {
             finalInput.value = String(score);
             row.dataset.aiGrade = String(score);
@@ -1122,29 +3155,83 @@
             row.dataset.aiGrade = "";
           }
 
+          const finalEditBtn = document.createElement("button");
+          finalEditBtn.type = "button";
+          finalEditBtn.className = "final-edit-btn";
+          finalEditBtn.dataset.action = "toggle-final-edit";
+          finalEditBtn.setAttribute("aria-label", t("edit_final_score"));
+          finalEditBtn.setAttribute("title", t("edit_final_score"));
+          finalEditBtn.innerHTML =
+            '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+            '<path fill="currentColor" d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zm17.71-10.04a1.003 1.003 0 0 0 0-1.42l-2.5-2.5a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.99-1.66z"/>' +
+            "</svg>";
+
           const overrideFlag = document.createElement("span");
           overrideFlag.className = "override-flag";
-          overrideFlag.textContent = "Override";
+          overrideFlag.textContent = t("override");
 
           finalWrap.appendChild(finalInput);
+          finalWrap.appendChild(finalEditBtn);
           finalWrap.appendChild(overrideFlag);
-          finalCell.appendChild(finalWrap);
+          finalBlock.appendChild(finalLabel);
+          finalBlock.appendChild(finalWrap);
 
-          row.appendChild(qCell);
-          row.appendChild(answerCell);
-          row.appendChild(aiCell);
-          row.appendChild(feedbackCell);
-          row.appendChild(finalCell);
+          scorePanel.appendChild(finalBlock);
+          scorePanel.appendChild(suggestedBlock);
+
+          rightColumn.appendChild(feedbackCell);
+          rightColumn.appendChild(scorePanel);
+          const gradeNavRow = document.createElement("div");
+          gradeNavRow.className = "grade-nav-row";
+          const prevGradeBtn = document.createElement("button");
+          prevGradeBtn.type = "button";
+          prevGradeBtn.className = "nav-btn";
+          prevGradeBtn.dataset.action = "prev-question";
+          prevGradeBtn.textContent = t("previous");
+          const nextGradeBtn = document.createElement("button");
+          nextGradeBtn.type = "button";
+          nextGradeBtn.className = "nav-btn";
+          nextGradeBtn.dataset.action = "next-question";
+          nextGradeBtn.textContent = t("next");
+          gradeNavRow.appendChild(prevGradeBtn);
+          gradeNavRow.appendChild(nextGradeBtn);
+          rightColumn.appendChild(gradeNavRow);
+          const exitRow = document.createElement("div");
+          exitRow.className = "exit-fullscreen-row";
+          const exitBtn = document.createElement("button");
+          exitBtn.type = "button";
+          exitBtn.className = "exit-fullscreen-btn";
+          exitBtn.dataset.action = "toggle-fullscreen";
+          exitBtn.textContent = t("exit_full_screen");
+          exitRow.appendChild(exitBtn);
+          rightColumn.appendChild(exitRow);
+
+          row.appendChild(leftColumn);
+          row.appendChild(rightColumn);
           resultsEl.appendChild(row);
 
           setOverrideState(row, finalInput);
+          updateScoreDiff(row);
         });
 
         updateTotalGrade();
+        setOverallVisibility(true);
+        setGlobalEditVisibility(true);
+        if (globalEditing) {
+          setGlobalEditing(true);
+        } else {
+          syncGlobalEditingState();
+        }
       };
 
-      const openModal = (title, text) => {
-        modalTitleEl.textContent = title;
+      const openModal = (key, text) => {
+        if (key) {
+          modalTitleEl.textContent = `${t("modal_question")} ${key}`;
+          modalEl.dataset.questionKey = key;
+        } else {
+          modalTitleEl.textContent = t("modal_question");
+          delete modalEl.dataset.questionKey;
+        }
         modalTextEl.textContent = text;
         modalEl.classList.add("is-open");
         modalEl.setAttribute("aria-hidden", "false");
@@ -1158,24 +3245,60 @@
         }
       };
 
-      const setFeedbackEditing = (row, editing) => {
+      const setFeedbackEditing = (row, editing, options = {}) => {
         row.classList.toggle("is-feedback-editing", editing);
+        const { focus = true } = options;
         const textarea = row.querySelector(".feedback-input");
         const button = row.querySelector("[data-action='edit-feedback']");
         const display = row.querySelector(".feedback-display");
+        const pointInputs = row.querySelectorAll(".mark-points-input");
         if (textarea) {
           textarea.rows = editing ? 5 : 2;
-          if (editing) {
+          if (editing && focus) {
             textarea.focus();
           }
         }
         if (button) {
-          button.textContent = editing ? "Done" : "Edit";
+          if (editing) {
+            button.setAttribute("aria-label", t("done"));
+            button.setAttribute("title", t("done"));
+            button.textContent = t("done");
+          } else {
+            button.setAttribute("aria-label", t("edit"));
+            button.setAttribute("title", t("edit"));
+            button.innerHTML =
+              '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="16" height="16">' +
+              '<path fill="currentColor" d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zm17.71-10.04a1.003 1.003 0 0 0 0-1.42l-2.5-2.5a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.99-1.66z"/>' +
+              "</svg>";
+          }
+        }
+        pointInputs.forEach((input) => {
+          input.disabled = !editing;
+        });
+        if (!editing) {
+          setSelectionPreview(row, null);
         }
         if (!editing && textarea && display) {
-          display.textContent = normalizeText(textarea.value) || "No feedback.";
+          display.textContent = normalizeText(textarea.value) || t("no_feedback");
         }
         setFeedbackExpanded(row, editing || row.classList.contains("is-feedback-expanded"));
+      };
+
+      const toggleRowFullscreen = async (row) => {
+        if (!row) {
+          return;
+        }
+        const isFullscreen = getFullscreenElement() === row;
+        try {
+          if (isFullscreen) {
+            await exitFullscreen();
+            return;
+          }
+          prepareRowForFullscreen(row);
+          await requestFullscreen(row);
+        } catch (error) {
+          statusEl.textContent = t("fullscreen_unavailable");
+        }
       };
 
       const closeModal = () => {
@@ -1192,10 +3315,140 @@
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
           closeModal();
+          toggleMenu(false);
         }
       });
 
+      document.addEventListener("selectionchange", () => {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) {
+          return;
+        }
+        const range = selection.getRangeAt(0);
+        const baseNode =
+          range.commonAncestorContainer.nodeType === 1
+            ? range.commonAncestorContainer
+            : range.commonAncestorContainer.parentElement;
+        const answerEl = baseNode ? baseNode.closest(".answer-text") : null;
+        const activePopover = document.activeElement
+          ? document.activeElement.closest(".highlight-controls")
+          : null;
+        if (activePopover) {
+          return;
+        }
+        if (!answerEl) {
+          resultsEl.querySelectorAll(".ledger-row").forEach((row) => setSelectionPreview(row, null));
+          return;
+        }
+        const row = answerEl.closest(".ledger-row");
+        if (!row) {
+          return;
+        }
+        const info = getSelectionOffsets(answerEl);
+        if (!info) {
+          setSelectionPreview(row, null);
+          return;
+        }
+        setSelectionPreview(row, info);
+        if (row.classList.contains("is-feedback-editing")) {
+          requestAnimationFrame(() => positionHighlightPopover(row, range));
+        }
+      });
+
+      document.addEventListener("fullscreenchange", syncFullscreenState);
+      document.addEventListener("webkitfullscreenchange", syncFullscreenState);
+
       resultsEl.addEventListener("click", (event) => {
+        const fullscreenBtn = event.target.closest("[data-action='toggle-fullscreen']");
+        if (fullscreenBtn) {
+          const row = fullscreenBtn.closest(".ledger-row");
+          toggleRowFullscreen(row);
+          return;
+        }
+
+        const finalEditBtn = event.target.closest("[data-action='toggle-final-edit']");
+        if (finalEditBtn) {
+          const row = finalEditBtn.closest(".ledger-row");
+          if (!row) {
+            return;
+          }
+          const isEditing = !row.querySelector(".final-input")?.disabled;
+          setFinalEditing(row, !isEditing);
+          syncGlobalEditingState();
+          return;
+        }
+
+        const prevBtn = event.target.closest("[data-action='prev-question']");
+        if (prevBtn) {
+          const row = prevBtn.closest(".ledger-row");
+          goToAdjacentRow(row, "prev");
+          return;
+        }
+
+        const nextBtn = event.target.closest("[data-action='next-question']");
+        if (nextBtn) {
+          const row = nextBtn.closest(".ledger-row");
+          goToAdjacentRow(row, "next");
+          return;
+        }
+
+        const removeBtn = event.target.closest("[data-action='remove-highlight']");
+        if (removeBtn) {
+          const row = removeBtn.closest(".ledger-row");
+          if (!row || !row._highlights) {
+            return;
+          }
+          const highlightId = removeBtn.dataset.id;
+          const index = row._highlights.findIndex((item) => item.id === highlightId);
+          if (index === -1) {
+            return;
+          }
+          const highlight = row._highlights[index];
+          const points = Number.isFinite(highlight.points) ? Math.abs(highlight.points) : 0;
+          if (highlight.active && points > 0) {
+            const delta = highlight.effect === "add" ? -points : points;
+            adjustFinalScore(row, delta);
+          }
+          row._highlights.splice(index, 1);
+          updateRowHighlights(row);
+          return;
+        }
+
+        const effectToggle = event.target.closest("[data-action='select-highlight-effect']");
+        if (effectToggle) {
+          const row = effectToggle.closest(".ledger-row");
+          if (!row) {
+            return;
+          }
+          setHighlightEffect(row, effectToggle.dataset.effect);
+          setHighlightWarning(row, "");
+          return;
+        }
+
+        const confirmBtn = event.target.closest("[data-action='confirm-highlight']");
+        if (confirmBtn) {
+          const row = confirmBtn.closest(".ledger-row");
+          confirmHighlight(row);
+          return;
+        }
+
+        const tooltip = event.target.closest(".highlight-tooltip");
+        if (tooltip) {
+          event.preventDefault();
+          event.stopPropagation();
+          const highlightSpan = tooltip.closest(".highlight-add, .highlight-deduct");
+          if (highlightSpan) {
+            editHighlightReason(highlightSpan);
+          }
+          return;
+        }
+
+        const highlightSpan = event.target.closest(".highlight-add, .highlight-deduct");
+        if (highlightSpan) {
+          toggleHighlight(highlightSpan);
+          return;
+        }
+
         const toggle = event.target.closest("[data-action='toggle-answer']");
         if (toggle) {
           const row = toggle.closest(".ledger-row");
@@ -1203,7 +3456,9 @@
             return;
           }
           row.classList.toggle("is-expanded");
-          toggle.textContent = row.classList.contains("is-expanded") ? "Collapse" : "Expand";
+          toggle.textContent = row.classList.contains("is-expanded")
+            ? t("collapse")
+            : t("expand");
           return;
         }
 
@@ -1215,21 +3470,7 @@
           }
           const isEditing = row.classList.contains("is-feedback-editing");
           setFeedbackEditing(row, !isEditing);
-          return;
-        }
-
-        const feedbackCell = event.target.closest(".cell-feedback");
-        if (feedbackCell) {
-          const row = feedbackCell.closest(".ledger-row");
-          if (!row) {
-            return;
-          }
-          if (row.classList.contains("is-feedback-editing")) {
-            setFeedbackExpanded(row, true);
-            return;
-          }
-          const isExpanded = row.classList.contains("is-feedback-expanded");
-          setFeedbackExpanded(row, !isExpanded);
+          syncGlobalEditingState();
           return;
         }
 
@@ -1240,17 +3481,88 @@
             return;
           }
           const key = row.dataset.key || "";
-          const questionText = row.dataset.questionText || `Question ${key}`;
-          openModal(`Question ${key}`, questionText);
+          const questionText = row.dataset.questionText || `${t("modal_question")} ${key}`;
+          openModal(key, questionText);
         }
+      });
+
+      resultsEl.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") {
+          return;
+        }
+        const controls = event.target.closest(".highlight-controls");
+        if (!controls) {
+          return;
+        }
+        event.preventDefault();
+        const row = controls.closest(".ledger-row");
+        confirmHighlight(row);
       });
 
       resultsEl.addEventListener("input", (event) => {
         const feedbackInput = event.target.closest(".feedback-input");
         if (feedbackInput) {
-          const row = feedbackInput.closest(".ledger-row");
-          if (row) {
-            setFeedbackExpanded(row, true);
+          return;
+        }
+
+        const pointsInput = event.target.closest(".mark-points-input");
+        if (pointsInput) {
+          const row = pointsInput.closest(".ledger-row");
+          if (!row || !row._highlights) {
+            return;
+          }
+          const highlightId = pointsInput.dataset.id;
+          const highlight = row._highlights.find((item) => item.id === highlightId);
+          if (!highlight) {
+            return;
+          }
+          const rawPoints = Number(pointsInput.value);
+          if (!Number.isFinite(rawPoints)) {
+            return;
+          }
+          const nextPoints = Math.abs(rawPoints);
+          const effect = highlight.effect === "deduct" ? "deduct" : "add";
+          const effectSign = effect === "add" ? 1 : -1;
+          const currentPoints = Number.isFinite(highlight.points) ? Math.abs(highlight.points) : 0;
+
+          const input = row.querySelector(".final-input");
+          const maxValue = input ? Number(input.max) : NaN;
+          const currentValue = input ? Number(input.value) : NaN;
+          const current = Number.isFinite(currentValue) ? currentValue : 0;
+          const maxScore = Number.isFinite(maxValue) ? maxValue : current;
+          const base = highlight.active ? current - effectSign * currentPoints : current;
+          const needed = effect === "add" ? Math.max(0, maxScore - base) : Math.max(0, base);
+
+          if (rawPoints < 0) {
+            setHighlightWarning(row, t("warning_negative"));
+          } else if (nextPoints > needed) {
+            setHighlightWarning(
+              row,
+              effect === "add"
+                ? t("warning_exceeds_remaining", {
+                    points: formatNumber(nextPoints),
+                    needed: formatNumber(needed),
+                  })
+                : t("warning_exceeds_current", {
+                    points: formatNumber(nextPoints),
+                    needed: formatNumber(needed),
+                  })
+            );
+          } else {
+            setHighlightWarning(row, "");
+          }
+
+          if (highlight.active) {
+            const delta = effectSign * (nextPoints - currentPoints);
+            if (delta) {
+              adjustFinalScore(row, delta);
+            }
+          }
+          highlight.points = nextPoints;
+          const span = row.querySelector(`.answer-text [data-id="${highlightId}"]`);
+          if (span) {
+            span.dataset.points = nextPoints ? String(nextPoints) : "";
+            updateHighlightTooltip(span);
           }
           return;
         }
@@ -1262,6 +3574,7 @@
         const row = input.closest(".ledger-row");
         if (row) {
           setOverrideState(row, input);
+          updateScoreDiff(row);
         }
         updateTotalGrade();
       });
@@ -1271,15 +3584,20 @@
         const studentFile = studentInput.files?.[0];
 
         if (!guideFile || !studentFile) {
-          statusEl.textContent = "Please choose both guide.txt and student_answers.txt.";
+          statusEl.textContent = t("choose_files");
           return;
         }
 
-        statusEl.textContent = "Sealing parchment and grading...";
+        statusEl.textContent = t("grading");
         gradeBtn.disabled = true;
         resultsEl.innerHTML = "";
-        rawOutputEl.textContent = "Awaiting output...";
-        totalGradeValueEl.textContent = "—";
+        rawOutputEl.textContent = t("awaiting_output");
+        totalGradeValueEl.textContent = "--";
+        setOverallVisibility(false);
+        setGlobalEditVisibility(false);
+        if (totalGradeMaxEl) {
+          totalGradeMaxEl.textContent = "/--";
+        }
 
         try {
           const [guideText, studentText] = await Promise.all([
@@ -1306,9 +3624,12 @@
             } catch (parseError) {
               // Leave detail as-is if response isn't JSON.
             }
-            statusEl.textContent = `Error: ${detail}`;
-            rawOutputEl.textContent = responseText || "Raw output not available.";
-            totalGradeValueEl.textContent = "—";
+            statusEl.textContent = t("error_prefix", { detail });
+            rawOutputEl.textContent = responseText || t("raw_unavailable");
+            totalGradeValueEl.textContent = "--";
+            if (totalGradeMaxEl) {
+              totalGradeMaxEl.textContent = "/--";
+            }
             gradeBtn.disabled = false;
             return;
           }
@@ -1324,11 +3645,14 @@
             statusEl.textContent = "";
             renderResults(parsed);
           } else {
-            statusEl.textContent = "Received non-JSON output. Showing raw output only.";
-            totalGradeValueEl.textContent = "—";
+            statusEl.textContent = t("non_json");
+            totalGradeValueEl.textContent = "--";
+            if (totalGradeMaxEl) {
+              totalGradeMaxEl.textContent = "/--";
+            }
           }
 
-          rawOutputEl.textContent = responseText || "Raw output not available.";
+          rawOutputEl.textContent = responseText || t("raw_unavailable");
 
           const runId = response.headers.get("X-Grady-Run-Id");
           if (runId) {
@@ -1339,12 +3663,56 @@
             }
           }
         } catch (error) {
-          statusEl.textContent = "Something went wrong while grading.";
-          totalGradeValueEl.textContent = "—";
+          statusEl.textContent = t("general_error");
+          totalGradeValueEl.textContent = "--";
+          if (totalGradeMaxEl) {
+            totalGradeMaxEl.textContent = "/--";
+          }
         } finally {
           gradeBtn.disabled = false;
         }
       });
+
+      if (devJsonInput) {
+        devJsonInput.addEventListener("change", async () => {
+          const file = devJsonInput.files?.[0];
+          if (!file) {
+            return;
+          }
+          statusEl.textContent = t("loading_json");
+          resultsEl.innerHTML = "";
+          rawOutputEl.textContent = t("awaiting_output");
+          totalGradeValueEl.textContent = "--";
+          setOverallVisibility(false);
+          setGlobalEditVisibility(false);
+          if (totalGradeMaxEl) {
+            totalGradeMaxEl.textContent = "/--";
+          }
+          try {
+            const text = await readFile(file);
+            let parsed = null;
+            try {
+              parsed = JSON.parse(text);
+            } catch (parseError) {
+              parsed = null;
+            }
+            rawOutputEl.textContent = text || t("raw_unavailable");
+            if (parsed && parsed.questions && parsed.answers && parsed.grades && parsed.comments) {
+              statusEl.textContent = t("loaded_sample", { name: file.name });
+              if (overallFeedbackEl) {
+                overallFeedbackEl.value = "";
+              }
+              renderResults(parsed);
+            } else {
+              statusEl.textContent = t("invalid_json");
+            }
+          } catch (error) {
+            statusEl.textContent = t("could_not_load");
+          } finally {
+            devJsonInput.value = "";
+          }
+        });
+      }
     </script>
   </body>
 </html>

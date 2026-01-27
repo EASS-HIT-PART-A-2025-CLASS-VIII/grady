@@ -3,3 +3,4 @@ logfire[fastapi]
 uvicorn[standard]
 python-dotenv
 pydantic-ai[anthropic]
+requests

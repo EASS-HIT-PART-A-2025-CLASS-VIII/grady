@@ -1,3 +1,4 @@
+from __future__ import annotations
 import json
 import os
 import re
@@ -7,8 +8,9 @@ from typing import Literal
 from uuid import uuid4
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Response
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 import logfire
 from opentelemetry import trace
@@ -16,6 +18,10 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic_ai import Agent
 from pydantic_ai.agent import AgentRunResult
 from pydantic_ai.models.anthropic import AnthropicModel
+import requests
+
+from urllib import error as urlerror
+from urllib import request as urlrequest
 
 load_dotenv()
 
@@ -27,8 +33,56 @@ logfire.configure()
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 STATIC_DIR = BASE_DIR / "static"
+
+
+def _parse_env_list(value: str) -> list[str]:
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
+def _resolve_frontend_dir() -> Path:
+    env_dir = os.getenv("FRONTEND_DIST_DIR", "").strip()
+    candidates: list[Path] = []
+    if env_dir:
+        candidates.append(Path(env_dir))
+    candidates.extend(
+        [
+            BASE_DIR / "frontend" / "dist",
+            BASE_DIR / "dist",
+            STATIC_DIR,
+        ]
+    )
+    for candidate in candidates:
+        if candidate.is_dir() and (candidate / "index.html").is_file():
+            return candidate
+    return STATIC_DIR
+
+
+FRONTEND_DIR = _resolve_frontend_dir()
+FRONTEND_DIR_RESOLVED = FRONTEND_DIR.resolve()
+FRONTEND_ASSETS_DIR = FRONTEND_DIR / "assets"
+FRONTEND_DEV_SERVER_URL = os.getenv("FRONTEND_DEV_SERVER_URL", "").strip()
+
+CORS_ORIGINS = _parse_env_list(
+    os.getenv("CORS_ORIGINS", os.getenv("VITE_DEV_ORIGINS", ""))
+)
+if not CORS_ORIGINS:
+    CORS_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"]
 BYPASS_OUTPUT_VALIDATION = True
-MODEL_SETTINGS = {"max_tokens": 8192}
+MODEL_MAX_TOKENS = int(os.getenv("MODEL_MAX_TOKENS", "12000"))
+MAX_PROMPT_TOKENS = int(os.getenv("MAX_PROMPT_TOKENS", str(MODEL_MAX_TOKENS)))
+MODEL_SETTINGS = {"max_tokens": MODEL_MAX_TOKENS}
+LOCAL_AI_URL = os.getenv("LOCAL_AI_URL")
+LOCAL_AI_MODEL = os.getenv("LOCAL_AI_MODEL", "dictalm-he:latest")
+LOCAL_AI_TIMEOUT = float(os.getenv("LOCAL_AI_TIMEOUT", "180"))
+LOCAL_AI_NUM_PREDICT = int(os.getenv("LOCAL_AI_NUM_PREDICT", str(MODEL_MAX_TOKENS)))
+LOCAL_AI_NUM_CTX = int(os.getenv("LOCAL_AI_NUM_CTX", str(MODEL_MAX_TOKENS)))
+LOCAL_AI_NEMO_URL = os.getenv("LOCAL_AI_NEMO_URL", "http://10.19.0.70:8000")
+LOCAL_AI_NEMO_MODEL = os.getenv(
+    "LOCAL_AI_NEMO_MODEL",
+    "mistralai/Mistral-Nemo-Instruct-FP8-2407",
+)
+LOCAL_AI_NEMO_TIMEOUT = float(os.getenv("LOCAL_AI_NEMO_TIMEOUT", "60"))
+LOCAL_AI_NEMO_TEMPERATURE = float(os.getenv("LOCAL_AI_NEMO_TEMPERATURE", "0.2"))
 
 SYSTEM_PROMPT = (
     "You are an automated grading assistant.\n"
@@ -44,7 +98,10 @@ SYSTEM_PROMPT = (
     "The start/end indices must refer to the exact substring in answers[k].\n"
     "Keep the question order as it appears in the guide. If an answer is missing, output an empty string, score 0, and a short comment.\n"
     "Do not output any extra keys, metadata, markdown, or explanation - only JSON.\n"
-    "Make it less than 8100 tokens in total."
+    "Ensure the JSON is well-formed and valid.\n"
+    "Don't write anything outside the JSON object.\n"
+    "The first character of your response must be '{' and the last character must be '}'.\n"
+    f"Make it less than {MAX_PROMPT_TOKENS} tokens in total."
 )
 
 USER_PROMPT_TEMPLATE = (
@@ -207,6 +264,180 @@ def _strip_code_fences(text: str) -> str:
     if lines and lines[0].strip().lower() == "json":
         lines = lines[1:]
     return "\n".join(lines).strip()
+
+
+
+def local_ai(
+    prompt: str,
+    url: str | None = None,
+    timeout: float = LOCAL_AI_TIMEOUT,
+    model: str | None = None,
+) -> str:
+    target = url or LOCAL_AI_URL or "http://127.0.0.1:11434/api/generate"
+    if not target:
+        raise ValueError("local_ai requires a url or LOCAL_AI_URL")
+
+    payload_data: dict[str, object] = {"prompt": prompt, "stream": False}
+    model_name = model or LOCAL_AI_MODEL
+    if model_name:
+        payload_data["model"] = model_name
+    options: dict[str, object] = {}
+    if LOCAL_AI_NUM_PREDICT > 0:
+        options["num_predict"] = LOCAL_AI_NUM_PREDICT
+    if LOCAL_AI_NUM_CTX > 0:
+        options["num_ctx"] = LOCAL_AI_NUM_CTX
+    if options:
+        payload_data["options"] = options
+        
+
+
+    payload = json.dumps(payload_data).encode("utf-8")
+    request = urlrequest.Request(
+        target,
+        data=payload,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+
+    try:
+        with urlrequest.urlopen(request, timeout=timeout) as response:
+            body = response.read().decode("utf-8", errors="replace")
+    except urlerror.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"Local AI request failed ({exc.code}): {detail}") from exc
+    except urlerror.URLError as exc:
+        raise RuntimeError(f"Local AI request failed: {exc.reason}") from exc
+
+    try:
+        parsed = json.loads(body)
+    except json.JSONDecodeError:
+        lines = [line for line in body.splitlines() if line.strip()]
+        if lines:
+            chunks: list[str] = []
+            for line in lines:
+                try:
+                    item = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if isinstance(item, dict):
+                    chunk = item.get("response") or item.get("content")
+                    if isinstance(chunk, str):
+                        chunks.append(chunk)
+            if chunks:
+                return "".join(chunks)
+        return body
+
+    if isinstance(parsed, dict):
+        response_text = parsed.get("response")
+        if isinstance(response_text, str):
+            return response_text
+        content_text = parsed.get("content")
+        if isinstance(content_text, str):
+            return content_text
+        choices = parsed.get("choices")
+        if isinstance(choices, list) and choices:
+            first = choices[0]
+            if isinstance(first, dict):
+                message = first.get("message")
+                if isinstance(message, dict) and isinstance(message.get("content"), str):
+                    return message["content"]
+                if isinstance(first.get("text"), str):
+                    return first["text"]
+
+    return body
+
+
+
+
+
+# (tu as déjà ces constantes)
+# LOCAL_AI_NEMO_URL = "http://10.19.0.70:8000"   # idéalement SANS /v1
+# LOCAL_AI_NEMO_MODEL = "mistralai/Mistral-Nemo-Instruct-FP8-2407"
+# LOCAL_AI_NEMO_TIMEOUT = 60
+# LOCAL_AI_NEMO_TEMPERATURE = 0.2
+
+def local_ai_nemo(
+    prompt: str | None = None,
+    messages: list[dict[str, str]] | None = None,
+    base: str | None = None,
+    timeout: float = LOCAL_AI_NEMO_TIMEOUT,
+    model: str | None = None,
+    temperature: float = LOCAL_AI_NEMO_TEMPERATURE,
+    max_tokens: int = 1024,          # ✅ clé pour éviter les valeurs négatives
+    top_p: float | None = None,
+) -> str:
+    target_base = (base or LOCAL_AI_NEMO_URL or "").rstrip("/")
+    if not target_base:
+        raise ValueError("local_ai_nemo requires a base url or LOCAL_AI_NEMO_URL")
+
+    # ✅ si on te donne déjà .../v1, on évite /v1/v1
+    if target_base.endswith("/v1"):
+        target_base = target_base[:-3]
+
+    if messages is None:
+        if prompt is None:
+            raise ValueError("local_ai_nemo requires prompt or messages")
+        messages = [{"role": "user", "content": prompt}]
+
+    # ✅ sécurité: max_tokens doit être > 0
+    if not isinstance(max_tokens, int) or max_tokens <= 0:
+        max_tokens = 256  # fallback sûr
+
+    payload_data: dict[str, object] = {
+        "messages": messages,
+        "temperature": float(temperature),
+        "max_tokens": max_tokens,     # ✅ on l’envoie explicitement
+        "stream": False,
+    }
+
+    if top_p is not None:
+        payload_data["top_p"] = float(top_p)
+
+    model_name = model or LOCAL_AI_NEMO_MODEL
+    if model_name:
+        payload_data["model"] = model_name
+
+    target = f"{target_base}/v1/chat/completions"
+
+    print("POST", target)
+    print(json.dumps(payload_data, ensure_ascii=False, indent=2))
+
+    try:
+        response = requests.post(target, json=payload_data, timeout=timeout)
+        response.raise_for_status()
+    except requests.HTTPError as exc:
+        # response existe ici
+        print("REQUEST BODY:", getattr(response.request, "body", None))
+        print("REQUEST HEADERS:", getattr(response.request, "headers", None))
+        raise RuntimeError(
+            f"Local AI Nemo request failed ({response.status_code}): {response.text}"
+        ) from exc
+    except requests.RequestException as exc:
+        raise RuntimeError(f"Local AI Nemo request failed: {exc}") from exc
+
+    try:
+        parsed = response.json()
+    except ValueError:
+        return response.text
+
+    if isinstance(parsed, dict):
+        choices = parsed.get("choices")
+        if isinstance(choices, list) and choices:
+            first = choices[0]
+            if isinstance(first, dict):
+                message = first.get("message")
+                if isinstance(message, dict) and isinstance(message.get("content"), str):
+                    return message["content"]
+                if isinstance(first.get("text"), str):
+                    return first["text"]
+
+        error = parsed.get("error")
+        if isinstance(error, dict) and isinstance(error.get("message"), str):
+            raise RuntimeError(f"Local AI Nemo request failed: {error['message']}")
+
+    return response.text
+
+
 
 
 def _coerce_float(value: object) -> float | None:
@@ -584,6 +815,9 @@ def _store_raw_output(raw_output: str) -> str:
     return run_id
 
 
+    
+    
+
 def get_agent() -> Agent:
     global _agent
     if _agent is not None:
@@ -600,7 +834,48 @@ def get_agent() -> Agent:
     return _agent
 
 
+def _frontend_redirect(request: Request, path: str) -> RedirectResponse | None:
+    if not FRONTEND_DEV_SERVER_URL:
+        return None
+    base = FRONTEND_DEV_SERVER_URL.rstrip("/")
+    target = f"{base}/{path.lstrip('/')}" if path else base
+    if request.url.query:
+        target = f"{target}?{request.url.query}"
+    return RedirectResponse(url=target)
+
+
+def _safe_frontend_path(path: str) -> Path | None:
+    if not path:
+        return None
+    candidate = (FRONTEND_DIR / path).resolve()
+    try:
+        candidate.relative_to(FRONTEND_DIR_RESOLVED)
+    except ValueError:
+        return None
+    if candidate.is_file():
+        return candidate
+    return None
+
+
+def _serve_frontend(request: Request, path: str) -> Response:
+    redirect = _frontend_redirect(request, path)
+    if redirect is not None:
+        return redirect
+    file_path = _safe_frontend_path(path)
+    if file_path is not None:
+        return FileResponse(file_path)
+    index_html = (FRONTEND_DIR / "index.html").read_text(encoding="utf-8")
+    return HTMLResponse(content=index_html)
+
+
 app = FastAPI(title="GRADY")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 if hasattr(logfire, "instrument_fastapi"):
     try:
         logfire.instrument_fastapi(app)
@@ -608,12 +883,13 @@ if hasattr(logfire, "instrument_fastapi"):
         logfire.warning("FastAPI instrumentation disabled", error=str(exc))
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+if FRONTEND_ASSETS_DIR.is_dir():
+    app.mount("/assets", StaticFiles(directory=FRONTEND_ASSETS_DIR), name="assets")
 
 
 @app.get("/", response_class=HTMLResponse)
-def index() -> HTMLResponse:
-    index_html = (STATIC_DIR / "index.html").read_text(encoding="utf-8")
-    return HTMLResponse(content=index_html)
+def index(request: Request) -> Response:
+    return _serve_frontend(request, "")
 
 
 @app.get("/grade/raw", response_model=RawOutputResponse)
@@ -639,9 +915,21 @@ def grade(payload: GradeRequest, response: Response) -> GradingView | Response:
             student_chars=len(payload.student_answers),
             bypass_validation=BYPASS_OUTPUT_VALIDATION,
         )
+        LOCAL = False
         if BYPASS_OUTPUT_VALIDATION:
-            result = agent.run_sync(prompt, output_type=str)
-            raw_output = result.output if isinstance(result.output, str) else _extract_raw_output(result)
+            if LOCAL:
+                result = local_ai_nemo(prompt=prompt)
+            
+            else:
+                result = agent.run_sync(prompt, output_type=str)
+            
+            
+            if isinstance(result, str):
+                raw_output = result
+            elif isinstance(getattr(result, "output", None), str):
+                raw_output = result.output
+            else:
+                raw_output = _extract_raw_output(result)
             raw_output_clean = _strip_code_fences(raw_output)
             _attach_raw_output(raw_output_clean)
             run_id = _store_raw_output(raw_output_clean)
@@ -661,6 +949,30 @@ def grade(payload: GradeRequest, response: Response) -> GradingView | Response:
             logfire.info("Raw model output (pre-validation)", raw_output=raw_output_clean)
             print("\nRaw model output (pre-validation, cleaned):", raw_output_clean)
             print("1:", result)
+            return grading_view
+        
+        
+        LOCAL = False
+        if LOCAL:
+            raw_output = local_ai_nemo(prompt)
+            raw_output_clean = _strip_code_fences(raw_output)
+            _attach_raw_output(raw_output_clean)
+            run_id = _store_raw_output(raw_output_clean)
+            response.headers["X-Grady-Run-Id"] = run_id
+
+            grading_view = _extract_grading_view(raw_output_clean)
+            if grading_view is None:
+                logfire.warning("Failed to parse grading view; returning raw output")
+                print("\nRaw model output (pre-validation, cleaned):", raw_output_clean)
+                return Response(content=raw_output_clean, media_type="application/json")
+            _attach_questions_map(grading_view.questions)
+            _attach_answers_map(grading_view.answers)
+            _attach_grades_map(grading_view.grades)
+            _attach_comments_map(grading_view.comments)
+            _attach_highlights_map(grading_view.highlights)
+            logfire.info("Raw model output (pre-validation)", raw_output=raw_output_clean)
+            print("\nRaw model output (pre-validation, cleaned):", raw_output_clean)
+            print("1:", raw_output_clean)
             return grading_view
 
         result = agent.run_sync(prompt)
@@ -682,3 +994,8 @@ def grade(payload: GradeRequest, response: Response) -> GradingView | Response:
     except Exception as exc:
         logfire.exception("Grading failed")
         raise HTTPException(status_code=500, detail=f"Grading failed: {exc}") from exc
+
+
+@app.get("/{path:path}")
+def frontend_fallback(path: str, request: Request) -> Response:
+    return _serve_frontend(request, path)
