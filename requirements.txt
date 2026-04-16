@@ -1,6 +1,10 @@
 fastapi
 logfire[fastapi]
+opentelemetry-api
+pydantic
 uvicorn[standard]
 python-dotenv
 pydantic-ai[anthropic]
 requests
+pypdf
+python-docx

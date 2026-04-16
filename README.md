@@ -1,6 +1,6 @@
 # GRADY
 
-Minimal full-stack grader that accepts two raw .txt files and returns grades with short comments per question.
+AI-powered full-stack grading assistant. Upload a guide (rubric/questions) and a student answer sheet — Grady returns per-question grades, comments, inline highlights (add/deduct), and rubric criteria scores. Supports `.txt`, PDF, and DOCX files. Built with FastAPI and pydantic-ai on top of Claude.
 
 ## Setup
 
@@ -41,7 +41,8 @@ Request JSON:
 ```json
 {
   "guide": "<raw guide.txt contents>",
-  "student_answers": "<raw student_answers.txt contents>"
+  "student_answers": "<raw student_answers.txt contents>",
+  "custom_prompt": "<optional extra instructions>"
 }
 ```
 
@@ -49,6 +50,7 @@ Response JSON (exact shape):
 
 ```json
 {
+  "student_name": "<student name if present, otherwise empty string>",
   "questions": {
     "1": "<full question text>",
     "2": "<full question text>"
@@ -71,11 +73,39 @@ Response JSON (exact shape):
       { "start": 40, "end": 58, "effect": "deduct", "points": 1, "reason": "Missing example" }
     ],
     "2": []
-  }
+  },
+  "criteria": [
+    {
+      "title": "Overall quality",
+      "score": 7,
+      "max_score": 10,
+      "comment": "Solid structure with minor language issues.",
+      "items": [
+        { "title": "Organization", "score": 2, "max_score": 3, "comment": "Clear sections." },
+        { "title": "Language", "score": 2, "max_score": 3, "comment": "Some grammar issues." },
+        { "title": "Bibliography", "score": 3, "max_score": 4, "comment": "Sources listed." }
+      ]
+    }
+  ]
 }
 ```
 
 Notes:
 - Question keys are sequential strings: `"1"`, `"2"`, ...
+- `student_name` is optional; it is an empty string when no name is found.
 - `start`/`end` are 0-based indices into `answers[k]` (end is exclusive).
 - The UI lets you edit the final score and feedback locally (no persistence).
+- Scores are computed as `max_score - sum(deduct highlight points)`; add highlights are informational only.
+
+### POST /grade/stream
+
+Streams NDJSON events while grading. Each line is a JSON object with a `type` field.
+
+Event types:
+- `status`: `{ "type": "status", "stage": "start" }`
+- `text`: `{ "type": "text", "delta": "<partial text>" }`
+- `final`: `{ "type": "final", "run_id": "...", "raw_output": "<full text>", "data": { ...grading view... } }`
+- `raw`: `{ "type": "raw", "run_id": "...", "raw_output": "<full text>" }`
+- `error`: `{ "type": "error", "detail": "..." }`
+
+The frontend uses this endpoint to show a live, incremental response and then renders the final grading view.
